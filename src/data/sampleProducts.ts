@@ -17,6 +17,8 @@ export const sampleProducts: Product[] = [
     isPremium: true,
     isNew: true,
     inStock: true,
+    stock: 15,
+    lowStockThreshold: 5,
     description: 'An exquisite handcrafted Kundan necklace set that embodies the grandeur of traditional Indian jewelry.',
     features: ['Handcrafted by master artisans', 'Premium Kundan stones', 'Gold-plated finish'],
     specifications: {
@@ -38,6 +40,8 @@ export const sampleProducts: Product[] = [
     isPremium: false,
     isNew: false,
     inStock: true,
+    stock: 15,
+    lowStockThreshold: 5,
     description: 'Beautiful traditional Jhumka earrings with intricate detailing.',
     features: ['Traditional design', 'Lightweight', 'Comfortable wear'],
     specifications: {
@@ -59,6 +63,8 @@ export const sampleProducts: Product[] = [
     isPremium: true,
     isNew: true,
     inStock: true,
+    stock: 15,
+    lowStockThreshold: 5,
     description: 'A stunning hand-painted mandala artwork that brings peace and harmony to any space.',
     features: ['Hand-painted by skilled artisans', 'Natural pigments used', 'Ready to hang', 'Unique piece'],
     specifications: {
@@ -81,6 +87,8 @@ export const sampleProducts: Product[] = [
     isPremium: false,
     isNew: false,
     inStock: true,
+    stock: 15,
+    lowStockThreshold: 5,
     description: 'Beautifully crafted ceramic vase perfect for home decoration.',
     features: ['Unique design', 'High-quality ceramic', 'Perfect for flowers', 'Easy to clean'],
     specifications: {
@@ -103,6 +111,8 @@ export const sampleProducts: Product[] = [
     isPremium: true,
     isNew: false,
     inStock: true,
+    stock: 15,
+    lowStockThreshold: 5,
     description: 'Exquisite golden lotus mandala artwork symbolizing purity and enlightenment.',
     features: ['Golden accents', 'Lotus symbolism', 'Meditation aid', 'Premium canvas'],
     specifications: {
@@ -125,6 +135,8 @@ export const sampleProducts: Product[] = [
     isPremium: true,
     isNew: false,
     inStock: true,
+    stock: 15,
+    lowStockThreshold: 5,
     description: 'Elegant heritage-style silver bangles set featuring traditional Indian craftsmanship.',
     features: ['Pure silver', 'Traditional patterns', 'Set of 4 bangles', 'Gift box included'],
     specifications: {
@@ -147,6 +159,8 @@ export const sampleProducts: Product[] = [
     isPremium: false,
     isNew: true,
     inStock: true,
+    stock: 15,
+    lowStockThreshold: 5,
     description: 'Intricate sacred geometry artwork that brings balance and harmony to your space.',
     features: ['Sacred patterns', 'Balancing energy', 'Modern interpretation', 'Quality print'],
     specifications: {
@@ -169,6 +183,8 @@ export const sampleProducts: Product[] = [
     isPremium: true,
     isNew: true,
     inStock: true,
+    stock: 15,
+    lowStockThreshold: 5,
     description: 'Luxurious emerald pendant set featuring genuine stones and exquisite gold work.',
     features: ['Genuine emerald stones', '18k gold plated', 'Matching earrings', 'Certificate included'],
     specifications: {
@@ -191,6 +207,8 @@ export const sampleProducts: Product[] = [
     isPremium: false,
     isNew: true,
     inStock: true,
+    stock: 15,
+    lowStockThreshold: 5,
     description: 'Beautifully crafted wooden jewelry box with intricate carvings and multiple compartments.',
     features: ['Hand-carved details', 'Multiple compartments', 'Velvet lining', 'Traditional design'],
     specifications: {
@@ -213,6 +231,8 @@ export const sampleProducts: Product[] = [
     isPremium: false,
     isNew: false,
     inStock: true,
+    stock: 15,
+    lowStockThreshold: 5,
     description: 'Elegant brass figurine showcasing traditional Indian craftsmanship and spiritual symbolism.',
     features: ['Pure brass construction', 'Hand-finished', 'Spiritual significance', 'Decorative piece'],
     specifications: {
@@ -235,6 +255,8 @@ export const sampleProducts: Product[] = [
     isPremium: true,
     isNew: false,
     inStock: true,
+    stock: 15,
+    lowStockThreshold: 5,
     description: 'Beautiful handmade ceramic pottery set featuring traditional glazing techniques.',
     features: ['Hand-thrown pottery', 'Traditional glazes', 'Set of 3 pieces', 'Food safe'],
     specifications: {
@@ -257,6 +279,8 @@ export const sampleProducts: Product[] = [
     isPremium: false,
     isNew: true,
     inStock: true,
+    stock: 15,
+    lowStockThreshold: 5,
     description: 'Luxurious handwoven silk scarf featuring traditional Indian patterns and vibrant colors.',
     features: ['Pure silk', 'Handwoven', 'Traditional patterns', 'Versatile styling'],
     specifications: {
@@ -279,6 +303,8 @@ export const sampleProducts: Product[] = [
     isPremium: false,
     isNew: false,
     inStock: true,
+    stock: 15,
+    lowStockThreshold: 5,
     description: 'Beautiful traditional oil lamp perfect for festivals and spiritual practices.',
     features: ['Traditional design', 'Brass construction', 'Perfect for festivals', 'Spiritual significance'],
     specifications: {
@@ -301,6 +327,8 @@ export const sampleProducts: Product[] = [
     isPremium: true,
     isNew: true,
     inStock: true,
+    stock: 15,
+    lowStockThreshold: 5,
     description: 'Exquisitely carved wooden elephant sculpture symbolizing wisdom and good fortune.',
     features: ['Hand-carved', 'Premium wood', 'Symbolic significance', 'Artistic masterpiece'],
     specifications: {
@@ -323,6 +351,8 @@ export const sampleProducts: Product[] = [
     isPremium: false,
     isNew: true,
     inStock: true,
+    stock: 15,
+    lowStockThreshold: 5,
     description: 'Vibrant and colorful mandala canvas art that brings positive energy to any space.',
     features: ['Bright colors', 'High-quality canvas', 'Ready to hang', 'Positive energy'],
     specifications: {
@@ -345,6 +375,8 @@ export const sampleProducts: Product[] = [
     isPremium: true,
     isNew: false,
     inStock: true,
+    stock: 15,
+    lowStockThreshold: 5,
     description: 'Magnificent bronze statue showcasing traditional Indian spiritual artistry.',
     features: ['Pure bronze', 'Hand-cast', 'Spiritual significance', 'Museum quality'],
     specifications: {
@@ -367,6 +399,8 @@ export const sampleProducts: Product[] = [
     isPremium: false,
     isNew: false,
     inStock: true,
+    stock: 15,
+    lowStockThreshold: 5,
     description: 'Ornate decorative mirror with intricate frame work perfect for any room.',
     features: ['Ornate design', 'Quality mirror', 'Wall mounting', 'Statement piece'],
     specifications: {
@@ -389,6 +423,8 @@ export const sampleProducts: Product[] = [
     isPremium: true,
     isNew: true,
     inStock: true,
+    stock: 15,
+    lowStockThreshold: 5,
     description: 'Stunning golden statement ring with traditional Indian design elements.',
     features: ['24k gold plated', 'Statement design', 'Adjustable size', 'Traditional motifs'],
     specifications: {
@@ -411,6 +447,8 @@ export const sampleProducts: Product[] = [
     isPremium: false,
     isNew: false,
     inStock: true,
+    stock: 15,
+    lowStockThreshold: 5,
     description: 'Beautiful collection of gemstone bracelets featuring natural stones and elegant design.',
     features: ['Natural gemstones', 'Set of 3 bracelets', 'Elastic band', 'Healing properties'],
     specifications: {
@@ -433,6 +471,8 @@ export const sampleProducts: Product[] = [
     isPremium: false,
     isNew: true,
     inStock: true,
+    stock: 15,
+    lowStockThreshold: 5,
     description: 'Versatile handcrafted storage box perfect for organizing and decorating your space.',
     features: ['Multi-purpose use', 'Handcrafted', 'Durable construction', 'Decorative appeal'],
     specifications: {

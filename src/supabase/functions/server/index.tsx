@@ -1015,7 +1015,170 @@ app.get('/make-server-33f75b66/categories', async (c) => {
   }
 });
 
+// Order endpoints
+app.post('/make-server-33f75b66/orders', async (c) => {
+  try {
+    const orderData = await c.req.json();
+    
+    if (!orderData.items || !orderData.customerDetails || !orderData.totalAmount) {
+      return c.json({ error: 'Items, customer details, and total amount are required' }, 400);
+    }
+
+    const orderId = crypto.randomUUID();
+    const orderNumber = `BK-${Date.now().toString().slice(-8)}`;
+    
+    const order = {
+      id: orderId,
+      orderNumber,
+      items: orderData.items,
+      customerDetails: orderData.customerDetails,
+      totalAmount: orderData.totalAmount,
+      status: 'pending',
+      paymentStatus: 'paid',
+      paymentData: orderData.paymentData,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days from now
+    };
+
+    // Store order
+    await kv.set(`order:${orderId}`, order);
+    await kv.set(`order_by_number:${orderNumber}`, orderId);
+    await kv.set(`order_by_customer:${orderData.customerDetails.email}:${orderId}`, orderId);
+    await kv.set(`order_by_status:${order.status}:${orderId}`, orderId);
+
+    // Update inventory (decrease stock)
+    for (const item of orderData.items) {
+      const product = await kv.get(`product:${item.id}`);
+      if (product) {
+        const newStock = Math.max(0, (product.stock || 0) - item.quantity);
+        await kv.set(`product:${item.id}`, { ...product, stock: newStock });
+      }
+    }
+
+    return c.json({ 
+      success: true,
+      order 
+    });
+  } catch (error) {
+    console.error('Error creating order:', error);
+    return c.json({ error: 'Error creating order' }, 500);
+  }
+});
+
+app.get('/make-server-33f75b66/orders/:id', async (c) => {
+  try {
+    const orderId = c.req.param('id');
+    const order = await kv.get(`order:${orderId}`);
+    
+    if (!order) {
+      return c.json({ error: 'Order not found' }, 404);
+    }
+
+    return c.json({ 
+      success: true,
+      order 
+    });
+  } catch (error) {
+    console.error('Error fetching order:', error);
+    return c.json({ error: 'Error fetching order' }, 500);
+  }
+});
+
+app.get('/make-server-33f75b66/orders/customer/:email', async (c) => {
+  try {
+    const email = c.req.param('email');
+    const orderKeys = await kv.getByPrefix(`order_by_customer:${email}:`);
+    const orders = [];
+    
+    for (const key of orderKeys) {
+      const order = await kv.get(`order:${key.value}`);
+      if (order) {
+        orders.push(order);
+      }
+    }
+    
+    // Sort by creation date (newest first)
+    orders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    return c.json({ 
+      success: true,
+      orders 
+    });
+  } catch (error) {
+    console.error('Error fetching customer orders:', error);
+    return c.json({ error: 'Error fetching customer orders' }, 500);
+  }
+});
+
+app.put('/make-server-33f75b66/orders/:id/status', async (c) => {
+  try {
+    const orderId = c.req.param('id');
+    const { status, notes } = await c.req.json();
+    
+    const order = await kv.get(`order:${orderId}`);
+    if (!order) {
+      return c.json({ error: 'Order not found' }, 404);
+    }
+
+    // Remove from old status index
+    await kv.delete(`order_by_status:${order.status}:${orderId}`);
+    
+    // Update order
+    const updatedOrder = {
+      ...order,
+      status,
+      notes: notes || order.notes,
+      updatedAt: new Date().toISOString()
+    };
+    
+    // Add to new status index
+    await kv.set(`order_by_status:${status}:${orderId}`, orderId);
+    await kv.set(`order:${orderId}`, updatedOrder);
+
+    return c.json({ 
+      success: true,
+      order: updatedOrder 
+    });
+  } catch (error) {
+    console.error('Error updating order status:', error);
+    return c.json({ error: 'Error updating order status' }, 500);
+  }
+});
+
 // Admin endpoints (protected)
+app.get('/make-server-33f75b66/admin/orders', async (c) => {
+  try {
+    const status = c.req.query('status') || 'all';
+    let orderKeys = [];
+    
+    if (status === 'all') {
+      orderKeys = await kv.getByPrefix('order_by_status:');
+    } else {
+      orderKeys = await kv.getByPrefix(`order_by_status:${status}:`);
+    }
+    
+    const orders = [];
+    for (const key of orderKeys) {
+      const order = await kv.get(`order:${key.value}`);
+      if (order) {
+        orders.push(order);
+      }
+    }
+    
+    // Sort by creation date (newest first)
+    orders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    return c.json({ 
+      success: true,
+      orders 
+    });
+  } catch (error) {
+    console.error('Error fetching admin orders:', error);
+    return c.json({ error: 'Error fetching admin orders' }, 500);
+  }
+});
+
 app.post('/make-server-33f75b66/admin/products', async (c) => {
   try {
     const productData = await c.req.json();
@@ -1028,6 +1191,7 @@ app.post('/make-server-33f75b66/admin/products', async (c) => {
     const product = {
       id: productId,
       ...productData,
+      stock: productData.stock || 0,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
@@ -1042,6 +1206,81 @@ app.post('/make-server-33f75b66/admin/products', async (c) => {
   } catch (error) {
     console.error('Error creating product:', error);
     return c.json({ error: 'Error creating product' }, 500);
+  }
+});
+
+// Inventory management endpoints
+app.get('/make-server-33f75b66/admin/inventory', async (c) => {
+  try {
+    const allProducts = await kv.getByPrefix('product:');
+    const inventory = allProducts
+      .map(item => item.value)
+      .filter(product => product !== null && product !== undefined)
+      .map(product => ({
+        id: product.id,
+        name: product.name,
+        category: product.category,
+        stock: product.stock || 0,
+        lowStockThreshold: product.lowStockThreshold || 5,
+        isLowStock: (product.stock || 0) <= (product.lowStockThreshold || 5),
+        price: product.price,
+        image: product.image
+      }));
+
+    return c.json({ 
+      success: true,
+      inventory 
+    });
+  } catch (error) {
+    console.error('Error fetching inventory:', error);
+    return c.json({ error: 'Error fetching inventory' }, 500);
+  }
+});
+
+app.put('/make-server-33f75b66/admin/inventory/:id/stock', async (c) => {
+  try {
+    const productId = c.req.param('id');
+    const { stock, lowStockThreshold } = await c.req.json();
+    
+    const product = await kv.get(`product:${productId}`);
+    if (!product) {
+      return c.json({ error: 'Product not found' }, 404);
+    }
+
+    const updatedProduct = {
+      ...product,
+      stock: stock,
+      lowStockThreshold: lowStockThreshold || product.lowStockThreshold || 5,
+      updated_at: new Date().toISOString()
+    };
+
+    await kv.set(`product:${productId}`, updatedProduct);
+
+    return c.json({ 
+      success: true,
+      product: updatedProduct 
+    });
+  } catch (error) {
+    console.error('Error updating stock:', error);
+    return c.json({ error: 'Error updating stock' }, 500);
+  }
+});
+
+app.get('/make-server-33f75b66/admin/low-stock', async (c) => {
+  try {
+    const allProducts = await kv.getByPrefix('product:');
+    const lowStockProducts = allProducts
+      .map(item => item.value)
+      .filter(product => product !== null && product !== undefined)
+      .filter(product => (product.stock || 0) <= (product.lowStockThreshold || 5));
+
+    return c.json({ 
+      success: true,
+      lowStockProducts 
+    });
+  } catch (error) {
+    console.error('Error fetching low stock products:', error);
+    return c.json({ error: 'Error fetching low stock products' }, 500);
   }
 });
 

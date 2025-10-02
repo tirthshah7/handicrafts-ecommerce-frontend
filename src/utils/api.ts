@@ -206,6 +206,22 @@ class ApiClient {
     return this.makeRequest<{ orders: Order[] }>('/admin/orders');
   }
 
+  // Inventory methods
+  async getInventory() {
+    return this.makeRequest<{ inventory: any[] }>('/admin/inventory');
+  }
+
+  async updateStock(productId: string, stock: number, lowStockThreshold?: number) {
+    return this.makeRequest<{ product: any }>(`/admin/inventory/${productId}/stock`, {
+      method: 'PUT',
+      body: JSON.stringify({ stock, lowStockThreshold }),
+    });
+  }
+
+  async getLowStockProducts() {
+    return this.makeRequest<{ lowStockProducts: any[] }>('/admin/low-stock');
+  }
+
   // Email methods
   async sendEmail(emailData: {
     to: string;

@@ -118,6 +118,12 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
   const [orderSearchTerm, setOrderSearchTerm] = useState('');
   const [isUpdatingOrder, setIsUpdatingOrder] = useState(false);
 
+  // Inventory management state
+  const [inventory, setInventory] = useState<any[]>([]);
+  const [lowStockProducts, setLowStockProducts] = useState<any[]>([]);
+  const [selectedProductForStock, setSelectedProductForStock] = useState<any>(null);
+  const [newStockLevel, setNewStockLevel] = useState<number>(0);
+
   // Load admin data on component mount
   useEffect(() => {
     const loadAdminData = async () => {
@@ -135,11 +141,23 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
           setAnalytics(analyticsResponse.data.analytics);
         }
 
-        // Load orders
-        const ordersResponse = await api.getAllOrders();
-        if (ordersResponse.success) {
-          setOrders(ordersResponse.data.orders);
-        }
+            // Load orders
+            const ordersResponse = await api.getAllOrders();
+            if (ordersResponse.success) {
+              setOrders(ordersResponse.data.orders);
+            }
+
+            // Load inventory
+            const inventoryResponse = await api.getInventory();
+            if (inventoryResponse.success) {
+              setInventory(inventoryResponse.data.inventory);
+            }
+
+            // Load low stock products
+            const lowStockResponse = await api.getLowStockProducts();
+            if (lowStockResponse.success) {
+              setLowStockProducts(lowStockResponse.data.lowStockProducts);
+            }
       } catch (error) {
         console.error('Error loading admin data:', error);
       } finally {
@@ -154,6 +172,42 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
     toast.success(`Stock updated for product ${productId}`, {
       description: `New stock level: ${newStock}`,
     });
+  };
+
+  // Inventory management functions
+  const handleUpdateStock = async (productId: string, newStock: number, lowStockThreshold?: number) => {
+    try {
+      const response = await api.updateStock(productId, newStock, lowStockThreshold);
+      if (response.success) {
+        // Update local inventory state
+        setInventory(prev => prev.map(item => 
+          item.id === productId 
+            ? { ...item, stock: newStock, lowStockThreshold: lowStockThreshold || item.lowStockThreshold, isLowStock: newStock <= (lowStockThreshold || item.lowStockThreshold || 5) }
+            : item
+        ));
+        
+        // Update low stock products
+        const updatedProduct = inventory.find(item => item.id === productId);
+        if (updatedProduct) {
+          const isLowStock = newStock <= (lowStockThreshold || updatedProduct.lowStockThreshold || 5);
+          setLowStockProducts(prev => {
+            const filtered = prev.filter(item => item.id !== productId);
+            if (isLowStock) {
+              filtered.push({ ...updatedProduct, stock: newStock, isLowStock: true });
+            }
+            return filtered;
+          });
+        }
+        
+        toast.success('Stock updated successfully');
+        setSelectedProductForStock(null);
+      } else {
+        toast.error(response.error || 'Failed to update stock');
+      }
+    } catch (error) {
+      console.error('Error updating stock:', error);
+      toast.error('Failed to update stock');
+    }
   };
 
   // Order management functions
