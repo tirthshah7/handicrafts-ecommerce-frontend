@@ -65,6 +65,7 @@ export interface Product {
 }
 
 import { useBackend } from './components/backend-provider';
+import { api } from './utils/api';
 
 function AppContent() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
@@ -72,6 +73,17 @@ function AppContent() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(false);
+  
+  // Contact information state
+  const [contactInfo, setContactInfo] = useState({
+    email: 'info@bhavyakavyas.com',
+    phone: '+91 98765 43210',
+    address: 'Mumbai, Maharashtra, India',
+    businessHours: 'Mon-Fri: 9AM-6PM, Sat: 10AM-4PM',
+    instagram: 'https://instagram.com/bhavyakavyas',
+    facebook: 'https://facebook.com/bhavyakavyas',
+    twitter: 'https://twitter.com/bhavyakavyas'
+  });
 
   // Use backend provider for data management
   const {
@@ -107,6 +119,60 @@ function AppContent() {
   useEffect(() => {
     const adminAuth = localStorage.getItem('bhavyakavya-admin-auth');
     setIsAdminAuthenticated(adminAuth === 'true');
+  }, []);
+
+  // Load contact information on component mount and listen for updates
+  useEffect(() => {
+    const loadContactInfo = async () => {
+      try {
+        // Try backend first
+        try {
+          const response = await api.getContactInfo();
+          if (response.success && response.data.contactInfo) {
+            setContactInfo(response.data.contactInfo);
+            // Also save to localStorage for offline mode
+            localStorage.setItem('contact_info', JSON.stringify(response.data.contactInfo));
+            return;
+          }
+        } catch (backendError) {
+          console.log('Backend contact info load failed, checking local storage:', backendError);
+        }
+
+        // Fallback to localStorage
+        const localContactInfo = localStorage.getItem('contact_info');
+        if (localContactInfo) {
+          try {
+            setContactInfo(JSON.parse(localContactInfo));
+          } catch (parseError) {
+            console.error('Failed to parse local contact info:', parseError);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load contact info:', error);
+      }
+    };
+
+    loadContactInfo();
+
+    // Listen for contact info updates from admin dashboard
+    const handleContactInfoUpdate = (event: CustomEvent) => {
+      setContactInfo(event.detail);
+    };
+
+    window.addEventListener('contactInfoUpdated', handleContactInfoUpdate as EventListener);
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'contact_info' && e.newValue) {
+        try {
+          setContactInfo(JSON.parse(e.newValue));
+        } catch (parseError) {
+          console.error('Failed to parse contact info from storage event:', parseError);
+        }
+      }
+    });
+
+    return () => {
+      window.removeEventListener('contactInfoUpdated', handleContactInfoUpdate as EventListener);
+    };
   }, []);
 
   const navigateToHome = () => setCurrentPage('home');
@@ -1008,6 +1074,8 @@ function AppContent() {
           onFAQClick={navigateToFAQ}
         isAuthenticated={isAuthenticated}
         userEmail={user?.email || ''}
+        contactInfo={contactInfo}
+        contactInfo={contactInfo}
       />
       <SearchModal
         isOpen={isSearchOpen}

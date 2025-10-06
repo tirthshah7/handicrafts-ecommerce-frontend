@@ -339,6 +339,26 @@ class ApiClient {
     }
   }
 
+  // Contact information methods
+  async getContactInfo() {
+    return this.makeRequest<{ contactInfo: any }>('/contact-info');
+  }
+
+  async updateContactInfo(contactInfo: any) {
+    console.log('Updating contact info:', contactInfo);
+    try {
+      const result = await this.makeRequest<{ contactInfo: any; message: string }>('/contact-info', {
+        method: 'PUT',
+        body: JSON.stringify(contactInfo),
+      });
+      console.log('Contact info update result:', result);
+      return result;
+    } catch (error) {
+      console.error('Contact info update error:', error);
+      throw error;
+    }
+  }
+
   // Email methods
   async sendEmail(emailData: {
     to: string;

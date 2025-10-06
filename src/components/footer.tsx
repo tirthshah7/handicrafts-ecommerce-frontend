@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Instagram, Facebook, Twitter, Mail, Phone, MapPin, LogIn, UserPlus, User } from 'lucide-react';
+import { Instagram, Facebook, Twitter, Mail, Phone, MapPin, LogIn, UserPlus, User, Clock } from 'lucide-react';
 import { Button } from './ui/button';
 
 interface FooterProps {
@@ -20,6 +20,15 @@ interface FooterProps {
   onFAQClick?: () => void;
   isAuthenticated?: boolean;
   userEmail?: string;
+  contactInfo?: {
+    email: string;
+    phone: string;
+    address: string;
+    businessHours?: string;
+    instagram?: string;
+    facebook?: string;
+    twitter?: string;
+  };
 }
 
 export function Footer({ 
@@ -39,7 +48,16 @@ export function Footer({
   onReturnPolicyClick,
   onFAQClick,
   isAuthenticated = false,
-  userEmail = ''
+  userEmail = '',
+  contactInfo = {
+    email: 'info@bhavyakavyas.com',
+    phone: '+91 98765 43210',
+    address: 'Mumbai, Maharashtra, India',
+    businessHours: 'Mon-Fri: 9AM-6PM, Sat: 10AM-4PM',
+    instagram: 'https://instagram.com/bhavyakavyas',
+    facebook: 'https://facebook.com/bhavyakavyas',
+    twitter: 'https://twitter.com/bhavyakavyas'
+  }
 }: FooterProps) {
   return (
     <footer className="bg-foreground text-background">
@@ -64,9 +82,9 @@ export function Footer({
               </p>
               <div className="flex space-x-4">
                 {[
-                  { icon: Instagram, href: "#" },
-                  { icon: Facebook, href: "#" },
-                  { icon: Twitter, href: "#" },
+                  { icon: Instagram, href: contactInfo.instagram || "#" },
+                  { icon: Facebook, href: contactInfo.facebook || "#" },
+                  { icon: Twitter, href: contactInfo.twitter || "#" },
                 ].map(({ icon: Icon, href }, index) => (
                   <motion.a
                     key={index}
@@ -256,16 +274,22 @@ export function Footer({
               <div className="space-y-2 pt-4">
                 <div className="flex items-center gap-3">
                   <Mail className="h-4 w-4 text-primary" />
-                  <span className="text-background/80 text-sm">info@bhavyakavyas.com</span>
+                  <span className="text-background/80 text-sm">{contactInfo.email}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Phone className="h-4 w-4 text-primary" />
-                  <span className="text-background/80 text-sm">+91 98765 43210</span>
+                  <span className="text-background/80 text-sm">{contactInfo.phone}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <MapPin className="h-4 w-4 text-primary" />
-                  <span className="text-background/80 text-sm">Mumbai, Maharashtra, India</span>
+                  <span className="text-background/80 text-sm">{contactInfo.address}</span>
                 </div>
+                {contactInfo.businessHours && (
+                  <div className="flex items-center gap-3">
+                    <Clock className="h-4 w-4 text-primary" />
+                    <span className="text-background/80 text-sm">{contactInfo.businessHours}</span>
+                  </div>
+                )}
               </div>
             </motion.div>
           </div>

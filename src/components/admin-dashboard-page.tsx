@@ -138,6 +138,17 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
     heroImageAlt: "Indian Traditional Handicrafts"
   });
 
+  // Contact info state
+  const [contactInfo, setContactInfo] = useState({
+    email: 'info@bhavyakavyas.com',
+    phone: '+91 98765 43210',
+    address: 'Mumbai, Maharashtra, India',
+    businessHours: 'Mon-Fri: 9AM-6PM, Sat: 10AM-4PM',
+    instagram: 'https://instagram.com/bhavyakavyas',
+    facebook: 'https://facebook.com/bhavyakavyas',
+    twitter: 'https://twitter.com/bhavyakavyas'
+  });
+
   // Offline mode state
   const [isOfflineMode, setIsOfflineMode] = useState(false);
 
@@ -212,6 +223,17 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
                   console.error('Failed to parse local hero content:', parseError);
                 }
               }
+            }
+
+            // Load contact info
+            try {
+              const contactResponse = await api.getContactInfo();
+              if (contactResponse.success && contactResponse.data.contactInfo) {
+                setContactInfo(contactResponse.data.contactInfo);
+              }
+            } catch (contactError) {
+              console.log('Backend contact info load failed, using default:', contactError);
+              // Use default contact info (already set in state)
             }
       } catch (error) {
         console.error('Error loading admin data:', error);
@@ -397,7 +419,7 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
 
       <div className="container mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-6 mb-6">
+          <TabsList className="grid w-full grid-cols-7 mb-6">
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
               Dashboard
@@ -421,6 +443,10 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
             <TabsTrigger value="hero" className="flex items-center gap-2">
               <Image className="h-4 w-4" />
               Hero Management
+            </TabsTrigger>
+            <TabsTrigger value="contact" className="flex items-center gap-2">
+              <Phone className="h-4 w-4" />
+              Contact Info
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
@@ -1597,6 +1623,196 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
               >
                 <Save className="h-4 w-4 mr-2" />
                 Save Hero Changes
+              </Button>
+            </div>
+          </TabsContent>
+
+          {/* Contact Management Tab */}
+          <TabsContent value="contact" className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-semibold">Contact Information Management</h2>
+              <p className="text-muted-foreground">Manage contact details displayed in the footer</p>
+            </div>
+
+            {/* Offline Mode Warning */}
+            {isOfflineMode && (
+              <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded">
+                <div className="flex items-center">
+                  <AlertTriangle className="h-4 w-4 mr-2" />
+                  <span className="text-sm">
+                    Backend unavailable. Changes will be saved locally and may not persist across devices.
+                  </span>
+                </div>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Contact Form */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Phone className="mr-2 h-5 w-5" />
+                    Contact Details
+                  </CardTitle>
+                  <CardDescription>
+                    Update contact information displayed in the website footer
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="contact-email">Email Address</Label>
+                    <Input
+                      id="contact-email"
+                      type="email"
+                      value={contactInfo.email}
+                      onChange={(e) => setContactInfo(prev => ({ ...prev, email: e.target.value }))}
+                      placeholder="info@bhavyakavyas.com"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="contact-phone">Phone Number</Label>
+                    <Input
+                      id="contact-phone"
+                      type="tel"
+                      value={contactInfo.phone}
+                      onChange={(e) => setContactInfo(prev => ({ ...prev, phone: e.target.value }))}
+                      placeholder="+91 98765 43210"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="contact-address">Address</Label>
+                    <Textarea
+                      id="contact-address"
+                      value={contactInfo.address}
+                      onChange={(e) => setContactInfo(prev => ({ ...prev, address: e.target.value }))}
+                      placeholder="Mumbai, Maharashtra, India"
+                      rows={3}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="contact-hours">Business Hours</Label>
+                    <Input
+                      id="contact-hours"
+                      value={contactInfo.businessHours}
+                      onChange={(e) => setContactInfo(prev => ({ ...prev, businessHours: e.target.value }))}
+                      placeholder="Mon-Fri: 9AM-6PM, Sat: 10AM-4PM"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Social Media */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Mail className="mr-2 h-5 w-5" />
+                    Social Media Links
+                  </CardTitle>
+                  <CardDescription>
+                    Manage social media links displayed in the footer
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="contact-instagram">Instagram URL</Label>
+                    <Input
+                      id="contact-instagram"
+                      type="url"
+                      value={contactInfo.instagram}
+                      onChange={(e) => setContactInfo(prev => ({ ...prev, instagram: e.target.value }))}
+                      placeholder="https://instagram.com/bhavyakavyas"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="contact-facebook">Facebook URL</Label>
+                    <Input
+                      id="contact-facebook"
+                      type="url"
+                      value={contactInfo.facebook}
+                      onChange={(e) => setContactInfo(prev => ({ ...prev, facebook: e.target.value }))}
+                      placeholder="https://facebook.com/bhavyakavyas"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="contact-twitter">Twitter URL</Label>
+                    <Input
+                      id="contact-twitter"
+                      type="url"
+                      value={contactInfo.twitter}
+                      onChange={(e) => setContactInfo(prev => ({ ...prev, twitter: e.target.value }))}
+                      placeholder="https://twitter.com/bhavyakavyas"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-4 pt-6">
+              <Button 
+                variant="outline"
+                onClick={() => {
+                  setContactInfo({
+                    email: 'info@bhavyakavyas.com',
+                    phone: '+91 98765 43210',
+                    address: 'Mumbai, Maharashtra, India',
+                    businessHours: 'Mon-Fri: 9AM-6PM, Sat: 10AM-4PM',
+                    instagram: 'https://instagram.com/bhavyakavyas',
+                    facebook: 'https://facebook.com/bhavyakavyas',
+                    twitter: 'https://twitter.com/bhavyakavyas'
+                  });
+                }}
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Reset to Default
+              </Button>
+              <Button 
+                className="bg-primary hover:bg-primary/90"
+                onClick={async () => {
+                  try {
+                    // Try backend save first
+                    try {
+                      const response = await api.updateContactInfo(contactInfo);
+                      if (response.success) {
+                        // Also save to localStorage for offline mode
+                        localStorage.setItem('contact_info', JSON.stringify(contactInfo));
+                        
+                        // Dispatch custom event for real-time updates
+                        window.dispatchEvent(new CustomEvent('contactInfoUpdated', { 
+                          detail: contactInfo 
+                        }));
+                        
+                        setIsOfflineMode(false);
+                        toast.success('Contact information saved to server successfully!');
+                        return;
+                      }
+                    } catch (backendError) {
+                      console.log('Backend save failed, using local storage:', backendError);
+                    }
+
+                    // Fallback to local storage
+                    localStorage.setItem('contact_info', JSON.stringify(contactInfo));
+                    
+                    // Dispatch custom event for real-time updates within same tab
+                    window.dispatchEvent(new CustomEvent('contactInfoUpdated', { 
+                      detail: contactInfo 
+                    }));
+                    
+                    setIsOfflineMode(true);
+                    toast.success('Contact information saved locally! (Backend unavailable)');
+                  } catch (error) {
+                    console.error('Error saving contact info:', error);
+                    toast.error('Failed to save contact information');
+                  }
+                }}
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Save Contact Changes
               </Button>
             </div>
           </TabsContent>

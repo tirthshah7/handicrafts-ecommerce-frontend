@@ -1716,5 +1716,73 @@ app.get('/make-server-33f75b66/admin/analytics', async (c) => {
   }
 });
 
+// Contact Information Management Endpoints
+// Get contact information
+app.get('/make-server-33f75b66/contact-info', async (c) => {
+  try {
+    const contactInfo = await kv.get('contact_info');
+    if (contactInfo) {
+      return c.json({ 
+        success: true, 
+        contactInfo: JSON.parse(contactInfo) 
+      });
+    } else {
+      // Return default contact information
+      const defaultContactInfo = {
+        email: 'info@bhavyakavyas.com',
+        phone: '+91 98765 43210',
+        address: 'Mumbai, Maharashtra, India',
+        businessHours: 'Mon-Fri: 9AM-6PM, Sat: 10AM-4PM',
+        socialMedia: {
+          instagram: 'https://instagram.com/bhavyakavyas',
+          facebook: 'https://facebook.com/bhavyakavyas',
+          twitter: 'https://twitter.com/bhavyakavyas'
+        }
+      };
+      return c.json({ 
+        success: true, 
+        contactInfo: defaultContactInfo 
+      });
+    }
+  } catch (error) {
+    console.error('Error fetching contact info:', error);
+    return c.json({ error: 'Error fetching contact information' }, 500);
+  }
+});
+
+// Update contact information
+app.put('/make-server-33f75b66/contact-info', async (c) => {
+  try {
+    const user = await authenticateUser(c.req);
+    if (!user) {
+      return c.json({ error: 'Unauthorized' }, 401);
+    }
+
+    const body = await c.req.json();
+    const contactInfo = {
+      email: body.email || 'info@bhavyakavyas.com',
+      phone: body.phone || '+91 98765 43210',
+      address: body.address || 'Mumbai, Maharashtra, India',
+      businessHours: body.businessHours || 'Mon-Fri: 9AM-6PM, Sat: 10AM-4PM',
+      socialMedia: {
+        instagram: body.instagram || 'https://instagram.com/bhavyakavyas',
+        facebook: body.facebook || 'https://facebook.com/bhavyakavyas',
+        twitter: body.twitter || 'https://twitter.com/bhavyakavyas'
+      }
+    };
+
+    await kv.set('contact_info', JSON.stringify(contactInfo));
+    
+    return c.json({ 
+      success: true, 
+      message: 'Contact information updated successfully',
+      contactInfo 
+    });
+  } catch (error) {
+    console.error('Error updating contact info:', error);
+    return c.json({ error: 'Error updating contact information' }, 500);
+  }
+});
+
 // Start server
 Deno.serve(app.fetch);
