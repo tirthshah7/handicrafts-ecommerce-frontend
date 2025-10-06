@@ -15,6 +15,9 @@ interface FooterProps {
   onTermsClick?: () => void;
   onCookiesClick?: () => void;
   onUserProfileClick?: () => void;
+  onOrderTrackingClick?: () => void;
+  onReturnPolicyClick?: () => void;
+  onFAQClick?: () => void;
   isAuthenticated?: boolean;
   userEmail?: string;
 }
@@ -32,6 +35,9 @@ export function Footer({
   onTermsClick,
   onCookiesClick,
   onUserProfileClick,
+  onOrderTrackingClick,
+  onReturnPolicyClick,
+  onFAQClick,
   isAuthenticated = false,
   userEmail = ''
 }: FooterProps) {
@@ -152,25 +158,42 @@ export function Footer({
             >
               <h4 className="text-lg text-primary">Customer Service</h4>
               <ul className="space-y-2">
-                {[
-                  'My Account',
-                  'Order Tracking',
-                  'Shipping Info',
-                  'Returns & Exchanges',
-                  'Size Guide',
-                  'Care Instructions',
-                  'FAQ'
-                ].map((link) => (
-                  <li key={link}>
-                    <motion.a
-                      href="#"
-                      whileHover={{ x: 5 }}
-                      className="text-background/80 hover:text-primary transition-colors duration-300"
-                    >
-                      {link}
-                    </motion.a>
-                  </li>
-                ))}
+                <li>
+                  <motion.button
+                    onClick={isAuthenticated ? onUserProfileClick : onSignInClick}
+                    whileHover={{ x: 5 }}
+                    className="text-background/80 hover:text-primary transition-colors duration-300 text-left"
+                  >
+                    My Account
+                  </motion.button>
+                </li>
+                <li>
+                  <motion.button
+                    onClick={onOrderTrackingClick}
+                    whileHover={{ x: 5 }}
+                    className="text-background/80 hover:text-primary transition-colors duration-300 text-left"
+                  >
+                    Order Tracking
+                  </motion.button>
+                </li>
+                <li>
+                  <motion.button
+                    onClick={onReturnPolicyClick}
+                    whileHover={{ x: 5 }}
+                    className="text-background/80 hover:text-primary transition-colors duration-300 text-left"
+                  >
+                    Return Policy
+                  </motion.button>
+                </li>
+                <li>
+                  <motion.button
+                    onClick={onFAQClick}
+                    whileHover={{ x: 5 }}
+                    className="text-background/80 hover:text-primary transition-colors duration-300 text-left"
+                  >
+                    FAQ
+                  </motion.button>
+                </li>
               </ul>
             </motion.div>
 

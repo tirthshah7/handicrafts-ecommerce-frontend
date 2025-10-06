@@ -23,6 +23,8 @@ import { AdminDashboardPage } from './components/admin-dashboard-page';
 import { AdminLoginPage } from './components/admin-login-page';
 import { OrderTrackingPage } from './components/order-tracking-page';
 import { UserProfilePage } from './components/user-profile-page';
+import { ReturnPolicyPage } from './components/return-policy-page';
+import { FAQPage } from './components/faq-page';
 import { ThemeProvider } from './components/theme-provider';
 import { ThemeToggle } from './components/theme-toggle';
 import { BackendProvider } from './components/backend-provider';
@@ -30,7 +32,7 @@ import { CartDebug } from './components/debug/CartDebug';
 import { toast } from 'sonner';
 import { Toaster } from './components/ui/sonner';
 
-type Page = 'home' | 'product' | 'jewellery' | 'mandala' | 'categories' | 'premium' | 'novelty' | 'cart' | 'allProducts' | 'signIn' | 'signUp' | 'about' | 'contact' | 'privacy' | 'terms' | 'cookies' | 'admin' | 'adminLogin' | 'orderTracking' | 'userProfile';
+type Page = 'home' | 'product' | 'jewellery' | 'mandala' | 'categories' | 'premium' | 'novelty' | 'cart' | 'allProducts' | 'signIn' | 'signUp' | 'about' | 'contact' | 'privacy' | 'terms' | 'cookies' | 'admin' | 'adminLogin' | 'orderTracking' | 'userProfile' | 'returnPolicy' | 'faq';
 
 export interface CartItem {
   id: string;
@@ -123,6 +125,8 @@ function AppContent() {
   const navigateToAllProducts = () => setCurrentPage('allProducts');
   const navigateToOrderTracking = () => setCurrentPage('orderTracking');
   const navigateToUserProfile = () => setCurrentPage('userProfile');
+  const navigateToReturnPolicy = () => setCurrentPage('returnPolicy');
+  const navigateToFAQ = () => setCurrentPage('faq');
   const navigateToSignIn = () => setCurrentPage('signIn');
   const navigateToSignUp = () => setCurrentPage('signUp');
   const navigateToAbout = () => setCurrentPage('about');
@@ -178,8 +182,11 @@ function AppContent() {
           onSignInClick={navigateToSignIn}
           onSignUpClick={navigateToSignUp}
           onAdminClick={navigateToAdmin}
-          onOrderTrackingClick={navigateToOrderTracking}
+            onOrderTrackingClick={navigateToOrderTracking}
           onUserProfileClick={navigateToUserProfile}
+          onOrderTrackingClick={navigateToOrderTracking}
+          onReturnPolicyClick={navigateToReturnPolicy}
+          onFAQClick={navigateToFAQ}
           wishlistCount={wishlistItems.length}
           cartCount={getTotalCartItems()}
         />
@@ -254,8 +261,11 @@ function AppContent() {
           onSignInClick={navigateToSignIn}
           onSignUpClick={navigateToSignUp}
           onAdminClick={navigateToAdmin}
-          onOrderTrackingClick={navigateToOrderTracking}
+            onOrderTrackingClick={navigateToOrderTracking}
           onUserProfileClick={navigateToUserProfile}
+          onOrderTrackingClick={navigateToOrderTracking}
+          onReturnPolicyClick={navigateToReturnPolicy}
+          onFAQClick={navigateToFAQ}
           wishlistCount={wishlistItems.length}
           cartCount={getTotalCartItems()}
         />
@@ -331,8 +341,11 @@ function AppContent() {
           onSignInClick={navigateToSignIn}
           onSignUpClick={navigateToSignUp}
           onAdminClick={navigateToAdmin}
-          onOrderTrackingClick={navigateToOrderTracking}
+            onOrderTrackingClick={navigateToOrderTracking}
           onUserProfileClick={navigateToUserProfile}
+          onOrderTrackingClick={navigateToOrderTracking}
+          onReturnPolicyClick={navigateToReturnPolicy}
+          onFAQClick={navigateToFAQ}
           wishlistCount={wishlistItems.length}
           cartCount={getTotalCartItems()}
         />
@@ -408,8 +421,11 @@ function AppContent() {
           onSignInClick={navigateToSignIn}
           onSignUpClick={navigateToSignUp}
           onAdminClick={navigateToAdmin}
-          onOrderTrackingClick={navigateToOrderTracking}
+            onOrderTrackingClick={navigateToOrderTracking}
           onUserProfileClick={navigateToUserProfile}
+          onOrderTrackingClick={navigateToOrderTracking}
+          onReturnPolicyClick={navigateToReturnPolicy}
+          onFAQClick={navigateToFAQ}
           wishlistCount={wishlistItems.length}
           cartCount={getTotalCartItems()}
         />
@@ -482,8 +498,11 @@ function AppContent() {
           onSignInClick={navigateToSignIn}
           onSignUpClick={navigateToSignUp}
           onAdminClick={navigateToAdmin}
-          onOrderTrackingClick={navigateToOrderTracking}
+            onOrderTrackingClick={navigateToOrderTracking}
           onUserProfileClick={navigateToUserProfile}
+          onOrderTrackingClick={navigateToOrderTracking}
+          onReturnPolicyClick={navigateToReturnPolicy}
+          onFAQClick={navigateToFAQ}
           wishlistCount={wishlistItems.length}
           cartCount={getTotalCartItems()}
         />
@@ -558,8 +577,11 @@ function AppContent() {
           onSignInClick={navigateToSignIn}
           onSignUpClick={navigateToSignUp}
           onAdminClick={navigateToAdmin}
-          onOrderTrackingClick={navigateToOrderTracking}
+            onOrderTrackingClick={navigateToOrderTracking}
           onUserProfileClick={navigateToUserProfile}
+          onOrderTrackingClick={navigateToOrderTracking}
+          onReturnPolicyClick={navigateToReturnPolicy}
+          onFAQClick={navigateToFAQ}
           wishlistCount={wishlistItems.length}
           cartCount={getTotalCartItems()}
         />
@@ -634,8 +656,11 @@ function AppContent() {
           onSignInClick={navigateToSignIn}
           onSignUpClick={navigateToSignUp}
           onAdminClick={navigateToAdmin}
-          onOrderTrackingClick={navigateToOrderTracking}
+            onOrderTrackingClick={navigateToOrderTracking}
           onUserProfileClick={navigateToUserProfile}
+          onOrderTrackingClick={navigateToOrderTracking}
+          onReturnPolicyClick={navigateToReturnPolicy}
+          onFAQClick={navigateToFAQ}
           wishlistCount={wishlistItems.length}
           cartCount={getTotalCartItems()}
         />
@@ -711,8 +736,11 @@ function AppContent() {
           onSignInClick={navigateToSignIn}
           onSignUpClick={navigateToSignUp}
           onAdminClick={navigateToAdmin}
-          onOrderTrackingClick={navigateToOrderTracking}
+            onOrderTrackingClick={navigateToOrderTracking}
           onUserProfileClick={navigateToUserProfile}
+          onOrderTrackingClick={navigateToOrderTracking}
+          onReturnPolicyClick={navigateToReturnPolicy}
+          onFAQClick={navigateToFAQ}
           wishlistCount={wishlistItems.length}
           cartCount={getTotalCartItems()}
         />
@@ -899,6 +927,34 @@ function AppContent() {
     );
   }
 
+  if (currentPage === 'returnPolicy') {
+    return (
+      <>
+        <ReturnPolicyPage 
+          onBackToHome={navigateToHome}
+          onContactClick={navigateToContact}
+        />
+        <ThemeToggle />
+        <CartDebug />
+        <Toaster />
+      </>
+    );
+  }
+
+  if (currentPage === 'faq') {
+    return (
+      <>
+        <FAQPage 
+          onBackToHome={navigateToHome}
+          onContactClick={navigateToContact}
+        />
+        <ThemeToggle />
+        <CartDebug />
+        <Toaster />
+      </>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Header 
@@ -947,6 +1003,9 @@ function AppContent() {
         onTermsClick={navigateToTerms}
         onCookiesClick={navigateToCookies}
         onUserProfileClick={navigateToUserProfile}
+          onOrderTrackingClick={navigateToOrderTracking}
+          onReturnPolicyClick={navigateToReturnPolicy}
+          onFAQClick={navigateToFAQ}
         isAuthenticated={isAuthenticated}
         userEmail={user?.email || ''}
       />
