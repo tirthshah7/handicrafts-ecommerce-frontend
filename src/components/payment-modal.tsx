@@ -57,7 +57,7 @@ export function PaymentModal({ isOpen, onClose, cartItems, totalAmount, onPaymen
   useEffect(() => {
     if (isOpen) {
       initializeRazorpay().then((loaded) => {
-        setRazorpayLoaded(loaded);
+        setRazorpayLoaded(!!loaded);
       });
     }
   }, [isOpen]);
@@ -68,7 +68,7 @@ export function PaymentModal({ isOpen, onClose, cartItems, totalAmount, onPaymen
       setCustomerDetails(prev => ({
         ...prev,
         [parent]: {
-          ...prev[parent as keyof CustomerDetails],
+          ...(prev[parent as keyof CustomerDetails] as any || {}),
           [child]: value
         }
       }));

@@ -31,6 +31,7 @@ export interface PaymentResponse {
   success: boolean;
   paymentId?: string;
   orderId?: string;
+  amount?: number;
   error?: string;
 }
 
@@ -50,7 +51,7 @@ export class PaymentService {
       const order = await razorpay.orders.create(options);
       return {
         orderId: order.id,
-        amount: order.amount
+        amount: Number(order.amount)
       };
     } catch (error) {
       console.error('Error creating Razorpay order:', error);

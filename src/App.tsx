@@ -26,7 +26,7 @@ import { UserProfilePage } from './components/user-profile-page';
 import { ThemeProvider } from './components/theme-provider';
 import { ThemeToggle } from './components/theme-toggle';
 import { BackendProvider } from './components/backend-provider';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { Toaster } from './components/ui/sonner';
 
 type Page = 'home' | 'product' | 'jewellery' | 'mandala' | 'categories' | 'premium' | 'novelty' | 'cart' | 'allProducts' | 'signIn' | 'signUp' | 'about' | 'contact' | 'privacy' | 'terms' | 'cookies' | 'admin' | 'adminLogin' | 'orderTracking' | 'userProfile';
@@ -54,6 +54,8 @@ export interface Product {
   isPremium?: boolean;
   isNew?: boolean;
   inStock?: boolean;
+  stock?: number;
+  lowStockThreshold?: number;
   description?: string;
   features?: string[];
   specifications?: Record<string, string>;

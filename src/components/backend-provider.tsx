@@ -1,13 +1,14 @@
 import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
 import { api, authHelpers } from '../utils/api';
 import type { Product, CartItem } from '../App';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { sampleProducts } from '../data/sampleProducts';
 
 interface User {
   id: string;
   email: string;
   name: string;
+  phone?: string;
 }
 
 interface WishlistItem {
@@ -174,8 +175,8 @@ export function BackendProvider({ children }: BackendProviderProps) {
   const signIn = useCallback(async (email: string, password: string): Promise<boolean> => {
     try {
       const response = await api.signIn(email, password);
-      if (response.success && response.data?.user) {
-        setUser(response.data.user);
+      if (response.success && response.data && typeof response.data === 'object' && 'user' in response.data) {
+        setUser((response.data as any).user);
         // Migrate localStorage data to backend
         await migrateLocalDataToBackend();
         toast.success('Successfully signed in!');
