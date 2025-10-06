@@ -1400,6 +1400,9 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
             <div>
               <h2 className="text-2xl font-semibold">Hero Section Management</h2>
               <p className="text-muted-foreground">Manage hero section content and images</p>
+              <p className="text-sm text-blue-600 mt-2">
+                💡 Changes are saved locally and will appear immediately. For cross-device sync, backend deployment is needed.
+              </p>
               {isOfflineMode && (
                 <div className="mt-2 p-2 bg-yellow-100 border border-yellow-300 rounded text-yellow-800 text-sm">
                   ⚠️ Offline Mode: Changes are saved locally. Backend is unavailable.
@@ -1614,7 +1617,7 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
                     }));
                     
                     setIsOfflineMode(true);
-                    toast.success('Hero content saved locally! (Backend unavailable)');
+                    toast.success('Hero content saved locally! Changes will appear immediately on this device.');
                   } catch (error) {
                     console.error('Error saving hero content:', error);
                     toast.error('Failed to save hero content');
@@ -1640,7 +1643,7 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
                 <div className="flex items-center">
                   <AlertTriangle className="h-4 w-4 mr-2" />
                   <span className="text-sm">
-                    Backend unavailable. Changes will be saved locally and may not persist across devices.
+                    Working in offline mode. Changes are saved locally and will appear immediately on this device.
                   </span>
                 </div>
               </div>
