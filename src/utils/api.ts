@@ -33,7 +33,26 @@ class ApiClient {
         headers,
       });
 
-      const data = await response.json();
+      // Check if response is JSON
+      const contentType = response.headers.get('content-type');
+      let data;
+      
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        // If not JSON, get text and try to parse
+        const text = await response.text();
+        console.warn('Non-JSON response received:', text);
+        try {
+          data = JSON.parse(text);
+        } catch (parseError) {
+          console.error('Failed to parse response as JSON:', parseError);
+          return {
+            success: false,
+            error: `Invalid response format: ${text.substring(0, 100)}...`,
+          };
+        }
+      }
 
       if (!response.ok) {
         console.error(`API Error (${response.status}):`, data);
@@ -220,6 +239,104 @@ class ApiClient {
 
   async getLowStockProducts() {
     return this.makeRequest<{ lowStockProducts: any[] }>('/admin/low-stock');
+  }
+
+  // Image management methods
+  async uploadImage(imageData: string, filename: string, type: string, productId?: string) {
+    console.log('API uploadImage called:', {
+      filename,
+      type,
+      productId,
+      imageDataLength: imageData.length,
+      apiUrl: `${API_BASE_URL}/images/upload`
+    });
+
+    try {
+      const result = await this.makeRequest<{ imageId: string; imageUrl: string; metadata: any }>('/images/upload', {
+        method: 'POST',
+        body: JSON.stringify({ imageData, filename, type, productId }),
+      });
+      
+      console.log('API uploadImage result:', result);
+      return result;
+    } catch (error) {
+      console.error('API uploadImage error:', error);
+      throw error;
+    }
+  }
+
+  async getImage(imageId: string) {
+    try {
+      const headers = {
+        'Authorization': `Bearer ${this.accessToken || publicAnonKey}`,
+      };
+
+      const response = await fetch(`${API_BASE_URL}/images/${imageId}`, {
+        method: 'GET',
+        headers,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return {
+          success: false,
+          error: errorData.error || `HTTP ${response.status}: ${response.statusText}`,
+        };
+      }
+
+      const blob = await response.blob();
+      return {
+        success: true,
+        data: blob,
+      };
+    } catch (error) {
+      console.error('Error fetching image:', error);
+      return {
+        success: false,
+        error: 'Failed to fetch image',
+      };
+    }
+  }
+
+  async getProductImages(productId: string) {
+    return this.makeRequest<{ images: any[] }>(`/images/product/${productId}`);
+  }
+
+  async deleteImage(imageId: string) {
+    return this.makeRequest<{ message: string }>(`/images/${imageId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async setMainImage(imageId: string, productId: string) {
+    return this.makeRequest<{ message: string }>(`/images/${imageId}/set-main`, {
+      method: 'PUT',
+      body: JSON.stringify({ productId }),
+    });
+  }
+
+  async getAllImages() {
+    return this.makeRequest<{ images: any[]; total: number }>('/admin/images');
+  }
+
+  // Hero content methods
+  async getHeroContent() {
+    return this.makeRequest<{ content: any }>('/hero-content');
+  }
+
+  async updateHeroContent(content: any) {
+    console.log('Updating hero content:', content);
+    try {
+      const result = await this.makeRequest<{ content: any; message: string }>('/hero-content', {
+        method: 'PUT',
+        body: JSON.stringify(content),
+      });
+      console.log('Hero content update result:', result);
+      return result;
+    } catch (error) {
+      console.error('Hero content update error:', error);
+      throw error;
+    }
   }
 
   // Email methods

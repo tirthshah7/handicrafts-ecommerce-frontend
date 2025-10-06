@@ -54,6 +54,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { toast } from 'sonner';
+import { ImageUpload, ImageGallery } from './admin/ImageUpload';
+import { ImageUploadTest } from './admin/ImageUploadTest';
 
 interface AdminDashboardPageProps {
   onBackToHome: () => void;
@@ -124,6 +126,38 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
   const [selectedProductForStock, setSelectedProductForStock] = useState<any>(null);
   const [newStockLevel, setNewStockLevel] = useState<number>(0);
 
+  // Hero content state
+  const [heroContent, setHeroContent] = useState({
+    title: "Discover India's",
+    subtitle: "Finest Handicrafts",
+    tagline: "Crafting a Poem of Splendid Living",
+    description: "From premium handcrafted jewelry to exquisite mandala art, explore our curated collection of authentic Indian handicrafts that celebrate tradition and artistry.",
+    ctaPrimary: "Shop Now",
+    ctaSecondary: "Explore Categories",
+    heroImage: "https://images.unsplash.com/photo-1699799085041-e288623615ed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjB0cmFkaXRpb25hbCUyMGhhbmRpY3JhZnRzJTIwaGVyb3xlbnwxfHx8fDE3NTkyMzM5MDd8MA&ixlib=rb-4.0&q=80&w=1080",
+    heroImageAlt: "Indian Traditional Handicrafts"
+  });
+
+  // Offline mode state
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
+
+  // Product form state
+  const [productForm, setProductForm] = useState({
+    name: '',
+    category: '',
+    price: '',
+    originalPrice: '',
+    stock: '',
+    lowStockThreshold: '5',
+    description: '',
+    features: '',
+    tags: '',
+    isPremium: false,
+    isNew: false,
+    mainImage: '',
+    additionalImages: [] as string[]
+  });
+
   // Load admin data on component mount
   useEffect(() => {
     const loadAdminData = async () => {
@@ -157,6 +191,27 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
             const lowStockResponse = await api.getLowStockProducts();
             if (lowStockResponse.success) {
               setLowStockProducts(lowStockResponse.data.lowStockProducts);
+            }
+
+            // Load hero content
+            try {
+              const heroResponse = await api.getHeroContent();
+              if (heroResponse.success && heroResponse.data.content) {
+                setHeroContent(heroResponse.data.content);
+                setIsOfflineMode(false); // Backend is working
+              }
+            } catch (backendError) {
+              console.log('Backend hero content load failed, checking local storage:', backendError);
+              setIsOfflineMode(true);
+              // Fallback to local storage
+              const localHeroContent = localStorage.getItem('hero_content');
+              if (localHeroContent) {
+                try {
+                  setHeroContent(JSON.parse(localHeroContent));
+                } catch (parseError) {
+                  console.error('Failed to parse local hero content:', parseError);
+                }
+              }
             }
       } catch (error) {
         console.error('Error loading admin data:', error);
@@ -363,6 +418,10 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
               <AlertTriangle className="h-4 w-4" />
               Inventory
             </TabsTrigger>
+            <TabsTrigger value="hero" className="flex items-center gap-2">
+              <Image className="h-4 w-4" />
+              Hero Management
+            </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
               Settings
@@ -548,54 +607,212 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
                     Add Product
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl">
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>Add New Product</DialogTitle>
                     <DialogDescription>Create a new product in your catalog</DialogDescription>
                   </DialogHeader>
-                  <div className="grid grid-cols-2 gap-4 py-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Product Name</Label>
-                      <Input id="name" placeholder="Enter product name" />
+                  <div className="space-y-6 py-4">
+                    {/* Product Images Section */}
+                    <div className="space-y-6">
+                      <div>
+                        <Label className="text-base font-medium">Product Images</Label>
+                        <p className="text-sm text-muted-foreground">Upload main product image and additional photos</p>
+                      </div>
+                      
+                      {/* Main Image Upload */}
+                      <div className="space-y-4">
+                        <Label htmlFor="mainImage">Main Product Image</Label>
+                        <ImageUpload
+                          onImageChange={(url) => setProductForm(prev => ({ ...prev, mainImage: url }))}
+                          currentImage={productForm.mainImage}
+                          placeholder="Enter main product image URL or upload file"
+                          showPreview={true}
+                        />
+                      </div>
+
+                      {/* Additional Images */}
+                      <ImageGallery
+                        images={productForm.additionalImages}
+                        onImagesChange={(images) => setProductForm(prev => ({ ...prev, additionalImages: images }))}
+                        maxImages={4}
+                      />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="category">Category</Label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="jewellery">Mahima's Jewellery</SelectItem>
-                          <SelectItem value="mandala">Mahima's Mandala Art</SelectItem>
-                          <SelectItem value="premium">Premium Collection</SelectItem>
-                          <SelectItem value="novelty">Novelty Products</SelectItem>
-                        </SelectContent>
-                      </Select>
+
+                    {/* Product Details */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="name">Product Name</Label>
+                        <Input 
+                          id="name" 
+                          value={productForm.name}
+                          onChange={(e) => setProductForm(prev => ({ ...prev, name: e.target.value }))}
+                          placeholder="Enter product name" 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="category">Category</Label>
+                        <Select value={productForm.category} onValueChange={(value) => setProductForm(prev => ({ ...prev, category: value }))}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="jewellery">Mahima's Jewellery</SelectItem>
+                            <SelectItem value="mandala">Mahima's Mandala Art</SelectItem>
+                            <SelectItem value="premium">Premium Collection</SelectItem>
+                            <SelectItem value="novelty">Novelty Products</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="price">Price (₹)</Label>
+                        <Input 
+                          id="price" 
+                          type="number" 
+                          value={productForm.price}
+                          onChange={(e) => setProductForm(prev => ({ ...prev, price: e.target.value }))}
+                          placeholder="0" 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="originalPrice">Original Price (₹)</Label>
+                        <Input 
+                          id="originalPrice" 
+                          type="number" 
+                          value={productForm.originalPrice}
+                          onChange={(e) => setProductForm(prev => ({ ...prev, originalPrice: e.target.value }))}
+                          placeholder="0" 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="stock">Stock Quantity</Label>
+                        <Input 
+                          id="stock" 
+                          type="number" 
+                          value={productForm.stock}
+                          onChange={(e) => setProductForm(prev => ({ ...prev, stock: e.target.value }))}
+                          placeholder="0" 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="lowStockThreshold">Low Stock Threshold</Label>
+                        <Input 
+                          id="lowStockThreshold" 
+                          type="number" 
+                          value={productForm.lowStockThreshold}
+                          onChange={(e) => setProductForm(prev => ({ ...prev, lowStockThreshold: e.target.value }))}
+                          placeholder="5" 
+                        />
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="price">Price (₹)</Label>
-                      <Input id="price" type="number" placeholder="0" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="stock">Stock Quantity</Label>
-                      <Input id="stock" type="number" placeholder="0" />
-                    </div>
-                    <div className="col-span-2 space-y-2">
-                      <Label htmlFor="description">Description</Label>
-                      <Textarea id="description" placeholder="Product description..." />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Premium Product</Label>
-                      <Switch />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="tags">Tags</Label>
-                      <Input id="tags" placeholder="sale, new, limited (comma separated)" />
+
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="description">Description</Label>
+                        <Textarea 
+                          id="description" 
+                          value={productForm.description}
+                          onChange={(e) => setProductForm(prev => ({ ...prev, description: e.target.value }))}
+                          placeholder="Product description..." 
+                          rows={3} 
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="features">Features (one per line)</Label>
+                        <Textarea 
+                          id="features" 
+                          value={productForm.features}
+                          onChange={(e) => setProductForm(prev => ({ ...prev, features: e.target.value }))}
+                          placeholder="Feature 1&#10;Feature 2&#10;Feature 3" 
+                          rows={3} 
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Premium Product</Label>
+                          <Switch 
+                            checked={productForm.isPremium}
+                            onCheckedChange={(checked) => setProductForm(prev => ({ ...prev, isPremium: checked }))}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>New Product</Label>
+                          <Switch 
+                            checked={productForm.isNew}
+                            onCheckedChange={(checked) => setProductForm(prev => ({ ...prev, isNew: checked }))}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="tags">Tags</Label>
+                        <Input 
+                          id="tags" 
+                          value={productForm.tags}
+                          onChange={(e) => setProductForm(prev => ({ ...prev, tags: e.target.value }))}
+                          placeholder="sale, new, limited (comma separated)" 
+                        />
+                      </div>
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button variant="outline">Cancel</Button>
-                    <Button className="bg-primary hover:bg-primary/90">Create Product</Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => {
+                        setProductForm({
+                          name: '',
+                          category: '',
+                          price: '',
+                          originalPrice: '',
+                          stock: '',
+                          lowStockThreshold: '5',
+                          description: '',
+                          features: '',
+                          tags: '',
+                          isPremium: false,
+                          isNew: false,
+                          mainImage: '',
+                          additionalImages: []
+                        });
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      className="bg-primary hover:bg-primary/90"
+                      onClick={() => {
+                        // Validate required fields
+                        if (!productForm.name || !productForm.category || !productForm.price) {
+                          toast.error('Please fill in all required fields');
+                          return;
+                        }
+
+                        // In a real app, this would save to the backend
+                        console.log('Creating product:', productForm);
+                        toast.success('Product created successfully!');
+                        
+                        // Reset form
+                        setProductForm({
+                          name: '',
+                          category: '',
+                          price: '',
+                          originalPrice: '',
+                          stock: '',
+                          lowStockThreshold: '5',
+                          description: '',
+                          features: '',
+                          tags: '',
+                          isPremium: false,
+                          isNew: false,
+                          mainImage: '',
+                          additionalImages: []
+                        });
+                      }}
+                    >
+                      Create Product
+                    </Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
@@ -1135,6 +1352,238 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Hero Management Tab */}
+          <TabsContent value="hero" className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-semibold">Hero Section Management</h2>
+              <p className="text-muted-foreground">Manage hero section content and images</p>
+              {isOfflineMode && (
+                <div className="mt-2 p-2 bg-yellow-100 border border-yellow-300 rounded text-yellow-800 text-sm">
+                  ⚠️ Offline Mode: Changes are saved locally. Backend is unavailable.
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Hero Content Editor */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Hero Content</CardTitle>
+                  <CardDescription>Edit hero section text and call-to-action buttons</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="heroTitle">Main Title</Label>
+                    <Input 
+                      id="heroTitle" 
+                      value={heroContent.title}
+                      onChange={(e) => setHeroContent(prev => ({ ...prev, title: e.target.value }))}
+                      placeholder="Enter main title"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="heroSubtitle">Subtitle</Label>
+                    <Input 
+                      id="heroSubtitle" 
+                      value={heroContent.subtitle}
+                      onChange={(e) => setHeroContent(prev => ({ ...prev, subtitle: e.target.value }))}
+                      placeholder="Enter subtitle"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="heroTagline">Tagline</Label>
+                    <Input 
+                      id="heroTagline" 
+                      value={heroContent.tagline}
+                      onChange={(e) => setHeroContent(prev => ({ ...prev, tagline: e.target.value }))}
+                      placeholder="Enter tagline"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="heroDescription">Description</Label>
+                    <Textarea 
+                      id="heroDescription" 
+                      value={heroContent.description}
+                      onChange={(e) => setHeroContent(prev => ({ ...prev, description: e.target.value }))}
+                      placeholder="Enter description"
+                      rows={3}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="ctaPrimary">Primary CTA Text</Label>
+                      <Input 
+                        id="ctaPrimary" 
+                        value={heroContent.ctaPrimary}
+                        onChange={(e) => setHeroContent(prev => ({ ...prev, ctaPrimary: e.target.value }))}
+                        placeholder="Primary button text"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="ctaSecondary">Secondary CTA Text</Label>
+                      <Input 
+                        id="ctaSecondary" 
+                        value={heroContent.ctaSecondary}
+                        onChange={(e) => setHeroContent(prev => ({ ...prev, ctaSecondary: e.target.value }))}
+                        placeholder="Secondary button text"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Hero Image Management */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Hero Image</CardTitle>
+                  <CardDescription>Upload and manage hero section image</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <ImageUpload
+                    onImageChange={(url) => setHeroContent(prev => ({ ...prev, heroImage: url }))}
+                    currentImage={heroContent.heroImage}
+                    placeholder="Enter image URL or upload file"
+                    showPreview={true}
+                  />
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="heroImageAlt">Alt Text</Label>
+                    <Input 
+                      id="heroImageAlt" 
+                      value={heroContent.heroImageAlt}
+                      onChange={(e) => setHeroContent(prev => ({ ...prev, heroImageAlt: e.target.value }))}
+                      placeholder="Enter alt text for accessibility"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Hero Preview */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Live Preview</CardTitle>
+                <CardDescription>Preview how the hero section will look on the website</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="relative bg-gradient-to-br from-background to-secondary p-8 rounded-lg overflow-hidden">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    {/* Left Content */}
+                    <div className="space-y-6">
+                      <div>
+                        <h1 className="text-3xl md:text-5xl leading-tight text-foreground">
+                          {heroContent.title}
+                          <span className="text-primary block">{heroContent.subtitle}</span>
+                        </h1>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <p className="text-lg text-primary/80 italic">
+                          {heroContent.tagline}
+                        </p>
+                        <p className="text-base text-muted-foreground max-w-lg">
+                          {heroContent.description}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        <Button size="lg">{heroContent.ctaPrimary}</Button>
+                        <Button size="lg" variant="outline">{heroContent.ctaSecondary}</Button>
+                      </div>
+                    </div>
+
+                    {/* Right Content - Hero Image */}
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 rounded-xl transform rotate-3"></div>
+                      <img 
+                        src={heroContent.heroImage}
+                        alt={heroContent.heroImageAlt}
+                        className="relative z-10 rounded-xl shadow-xl w-full h-64 object-cover"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Debug Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Debug Image Upload</CardTitle>
+                <CardDescription>Test image upload functionality</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ImageUploadTest />
+              </CardContent>
+            </Card>
+
+            {/* Save Changes */}
+            <div className="flex justify-end gap-3">
+              <Button 
+                variant="outline"
+                onClick={() => {
+                  setHeroContent({
+                    title: "Discover India's",
+                    subtitle: "Finest Handicrafts",
+                    tagline: "Crafting a Poem of Splendid Living",
+                    description: "From premium handcrafted jewelry to exquisite mandala art, explore our curated collection of authentic Indian handicrafts that celebrate tradition and artistry.",
+                    ctaPrimary: "Shop Now",
+                    ctaSecondary: "Explore Categories",
+                    heroImage: "https://images.unsplash.com/photo-1699799085041-e288623615ed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjB0cmFkaXRpb25hbCUyMGhhbmRpY3JhZnRzJTIwaGVyb3xlbnwxfHx8fDE3NTkyMzM5MDd8MA&ixlib=rb-4.0&q=80&w=1080",
+                    heroImageAlt: "Indian Traditional Handicrafts"
+                  });
+                  toast.success('Hero content reset to default');
+                }}
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Reset to Default
+              </Button>
+              <Button 
+                className="bg-primary hover:bg-primary/90"
+                onClick={async () => {
+                  try {
+                    // Try backend save first
+                    try {
+                      const response = await api.updateHeroContent(heroContent);
+                      if (response.success) {
+                        // Also save to localStorage for offline mode
+                        localStorage.setItem('hero_content', JSON.stringify(heroContent));
+                        
+                        // Dispatch custom event for real-time updates
+                        window.dispatchEvent(new CustomEvent('heroContentUpdated', { 
+                          detail: heroContent 
+                        }));
+                        
+                        setIsOfflineMode(false);
+                        toast.success('Hero content saved to server successfully!');
+                        return;
+                      }
+                    } catch (backendError) {
+                      console.log('Backend save failed, using local storage:', backendError);
+                    }
+
+                    // Fallback to local storage
+                    localStorage.setItem('hero_content', JSON.stringify(heroContent));
+                    
+                    // Dispatch custom event for real-time updates within same tab
+                    window.dispatchEvent(new CustomEvent('heroContentUpdated', { 
+                      detail: heroContent 
+                    }));
+                    
+                    setIsOfflineMode(true);
+                    toast.success('Hero content saved locally! (Backend unavailable)');
+                  } catch (error) {
+                    console.error('Error saving hero content:', error);
+                    toast.error('Failed to save hero content');
+                  }
+                }}
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Save Hero Changes
+              </Button>
+            </div>
           </TabsContent>
 
           {/* Settings Tab */}

@@ -583,6 +583,57 @@ app.get('/make-server-33f75b66/health', (c) => {
   return c.json({ status: 'healthy', timestamp: new Date().toISOString() });
 });
 
+// Test image upload endpoint
+app.post('/make-server-33f75b66/test-upload', async (c) => {
+  try {
+    const body = await c.req.json();
+    console.log('Test upload received:', {
+      hasImageData: !!body.imageData,
+      filename: body.filename,
+      type: body.type,
+      imageDataLength: body.imageData?.length
+    });
+    
+    return c.json({ 
+      success: true, 
+      message: 'Test upload successful',
+      received: {
+        filename: body.filename,
+        type: body.type,
+        imageDataLength: body.imageData?.length
+      }
+    });
+  } catch (error) {
+    console.error('Test upload error:', error);
+    return c.json({ error: 'Test upload failed' }, 500);
+  }
+});
+
+// Test hero content save endpoint
+app.post('/make-server-33f75b66/test-hero-save', async (c) => {
+  try {
+    const body = await c.req.json();
+    console.log('Test hero save received:', {
+      title: body.title,
+      subtitle: body.subtitle,
+      hasImage: !!body.heroImage
+    });
+    
+    return c.json({ 
+      success: true, 
+      message: 'Test hero save successful',
+      received: {
+        title: body.title,
+        subtitle: body.subtitle,
+        hasImage: !!body.heroImage
+      }
+    });
+  } catch (error) {
+    console.error('Test hero save error:', error);
+    return c.json({ error: 'Test hero save failed' }, 500);
+  }
+});
+
 // Debug endpoint to check products count
 app.get('/make-server-33f75b66/debug/products-count', async (c) => {
   try {
@@ -1338,6 +1389,285 @@ app.delete('/make-server-33f75b66/admin/products/:id', async (c) => {
 });
 
 // Analytics endpoint for admin dashboard
+// Image Management Endpoints
+
+// Upload image (base64 data)
+app.post('/make-server-33f75b66/images/upload', async (c) => {
+  try {
+    const { imageData, filename, type, productId } = await c.req.json();
+    
+    if (!imageData || !filename || !type) {
+      return c.json({ error: 'Image data, filename, and type are required' }, 400);
+    }
+
+    // Validate image type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(type.toLowerCase())) {
+      return c.json({ error: 'Unsupported image type. Allowed: JPEG, PNG, GIF, WebP' }, 400);
+    }
+
+    // Generate unique image ID
+    const imageId = crypto.randomUUID();
+    const imageKey = `image:${imageId}`;
+    
+    // Calculate actual file size from base64
+    const base64Size = Math.round((imageData.length * 3) / 4);
+    
+    // Store image metadata
+    const imageMetadata = {
+      id: imageId,
+      filename,
+      type: type.toLowerCase(),
+      productId: productId || null,
+      uploadedAt: new Date().toISOString(),
+      size: base64Size,
+      isMain: false
+    };
+
+    // Store image data and metadata
+    await kv.set(imageKey, imageMetadata);
+    await kv.set(`image_data:${imageId}`, { data: imageData });
+    
+    // If it's a product image, link it to the product
+    if (productId) {
+      const productImagesKey = `product_images:${productId}`;
+      const existingImages = await kv.get(productImagesKey) || [];
+      await kv.set(productImagesKey, [...existingImages, imageId]);
+    }
+
+    return c.json({ 
+      success: true,
+      imageId,
+      imageUrl: `/make-server-33f75b66/images/${imageId}`,
+      metadata: imageMetadata
+    });
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    return c.json({ error: 'Failed to upload image' }, 500);
+  }
+});
+
+// Get image by ID
+app.get('/make-server-33f75b66/images/:id', async (c) => {
+  try {
+    const imageId = c.req.param('id');
+    const imageKey = `image:${imageId}`;
+    
+    const imageMetadata = await kv.get(imageKey);
+    if (!imageMetadata) {
+      return c.json({ error: 'Image not found' }, 404);
+    }
+
+    const imageData = await kv.get(`image_data:${imageId}`);
+    if (!imageData) {
+      return c.json({ error: 'Image data not found' }, 404);
+    }
+
+    // Return image data with proper headers
+    return new Response(imageData.data, {
+      headers: {
+        'Content-Type': imageMetadata.type,
+        'Content-Length': imageMetadata.size.toString(),
+        'Cache-Control': 'public, max-age=31536000'
+      }
+    });
+  } catch (error) {
+    console.error('Error retrieving image:', error);
+    return c.json({ error: 'Failed to retrieve image' }, 500);
+  }
+});
+
+// Get images by product ID
+app.get('/make-server-33f75b66/images/product/:productId', async (c) => {
+  try {
+    const productId = c.req.param('productId');
+    const productImagesKey = `product_images:${productId}`;
+    
+    const imageIds = await kv.get(productImagesKey) || [];
+    const images = [];
+
+    for (const imageId of imageIds) {
+      const imageMetadata = await kv.get(`image:${imageId}`);
+      if (imageMetadata) {
+        images.push({
+          ...imageMetadata,
+          imageUrl: `/make-server-33f75b66/images/${imageId}`
+        });
+      }
+    }
+
+    return c.json({ 
+      success: true,
+      images 
+    });
+  } catch (error) {
+    console.error('Error retrieving product images:', error);
+    return c.json({ error: 'Failed to retrieve product images' }, 500);
+  }
+});
+
+// Delete image
+app.delete('/make-server-33f75b66/images/:id', async (c) => {
+  try {
+    const imageId = c.req.param('id');
+    const imageKey = `image:${imageId}`;
+    
+    const imageMetadata = await kv.get(imageKey);
+    if (!imageMetadata) {
+      return c.json({ error: 'Image not found' }, 404);
+    }
+
+    // Delete image data and metadata
+    await kv.delete(imageKey);
+    await kv.delete(`image_data:${imageId}`);
+
+    // Remove from product images if it's linked to a product
+    if (imageMetadata.productId) {
+      const productImagesKey = `product_images:${imageMetadata.productId}`;
+      const existingImages = await kv.get(productImagesKey) || [];
+      const updatedImages = existingImages.filter(id => id !== imageId);
+      await kv.set(productImagesKey, updatedImages);
+    }
+
+    return c.json({ 
+      success: true,
+      message: 'Image deleted successfully' 
+    });
+  } catch (error) {
+    console.error('Error deleting image:', error);
+    return c.json({ error: 'Failed to delete image' }, 500);
+  }
+});
+
+// Set main image for product
+app.put('/make-server-33f75b66/images/:id/set-main', async (c) => {
+  try {
+    const imageId = c.req.param('id');
+    const { productId } = await c.req.json();
+    
+    if (!productId) {
+      return c.json({ error: 'Product ID is required' }, 400);
+    }
+
+    const imageKey = `image:${imageId}`;
+    const imageMetadata = await kv.get(imageKey);
+    
+    if (!imageMetadata) {
+      return c.json({ error: 'Image not found' }, 404);
+    }
+
+    // Update image metadata to mark as main
+    const updatedMetadata = {
+      ...imageMetadata,
+      isMain: true,
+      productId
+    };
+    await kv.set(imageKey, updatedMetadata);
+
+    // Remove main flag from other images of the same product
+    const productImagesKey = `product_images:${productId}`;
+    const productImageIds = await kv.get(productImagesKey) || [];
+    
+    for (const id of productImageIds) {
+      if (id !== imageId) {
+        const otherImageMetadata = await kv.get(`image:${id}`);
+        if (otherImageMetadata) {
+          const updatedOtherMetadata = {
+            ...otherImageMetadata,
+            isMain: false
+          };
+          await kv.set(`image:${id}`, updatedOtherMetadata);
+        }
+      }
+    }
+
+    return c.json({ 
+      success: true,
+      message: 'Main image set successfully' 
+    });
+  } catch (error) {
+    console.error('Error setting main image:', error);
+    return c.json({ error: 'Failed to set main image' }, 500);
+  }
+});
+
+// Get all images (admin)
+app.get('/make-server-33f75b66/admin/images', async (c) => {
+  try {
+    const allImages = await kv.getByPrefix('image:');
+    const images = allImages.map(img => ({
+      ...img,
+      imageUrl: `/make-server-33f75b66/images/${img.id}`
+    }));
+
+    return c.json({ 
+      success: true,
+      images,
+      total: images.length
+    });
+  } catch (error) {
+    console.error('Error retrieving all images:', error);
+    return c.json({ error: 'Failed to retrieve images' }, 500);
+  }
+});
+
+// Hero content management endpoints
+app.get('/make-server-33f75b66/hero-content', async (c) => {
+  try {
+    const heroContent = await kv.get('hero_content');
+    
+    if (!heroContent) {
+      // Return default hero content
+      const defaultContent = {
+        title: "Discover India's",
+        subtitle: "Finest Handicrafts",
+        tagline: "Crafting a Poem of Splendid Living",
+        description: "From premium handcrafted jewelry to exquisite mandala art, explore our curated collection of authentic Indian handicrafts that celebrate tradition and artistry.",
+        ctaPrimary: "Shop Now",
+        ctaSecondary: "Explore Categories",
+        heroImage: "https://images.unsplash.com/photo-1699799085041-e288623615ed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjB0cmFkaXRpb25hbCUyMGhhbmRpY3JhZnRzJTIwaGVyb3xlbnwxfHx8fDE3NTkyMzM5MDd8MA&ixlib=rb-4.0&q=80&w=1080",
+        heroImageAlt: "Indian Traditional Handicrafts",
+        updatedAt: new Date().toISOString()
+      };
+      return c.json({ success: true, content: defaultContent });
+    }
+
+    return c.json({ 
+      success: true,
+      content: heroContent 
+    });
+  } catch (error) {
+    console.error('Error retrieving hero content:', error);
+    return c.json({ error: 'Failed to retrieve hero content' }, 500);
+  }
+});
+
+app.put('/make-server-33f75b66/hero-content', async (c) => {
+  try {
+    const heroContent = await c.req.json();
+    
+    if (!heroContent.title || !heroContent.subtitle) {
+      return c.json({ error: 'Title and subtitle are required' }, 400);
+    }
+
+    const updatedContent = {
+      ...heroContent,
+      updatedAt: new Date().toISOString()
+    };
+
+    await kv.set('hero_content', updatedContent);
+
+    return c.json({ 
+      success: true,
+      content: updatedContent,
+      message: 'Hero content updated successfully' 
+    });
+  } catch (error) {
+    console.error('Error updating hero content:', error);
+    return c.json({ error: 'Failed to update hero content' }, 500);
+  }
+});
+
 app.get('/make-server-33f75b66/admin/analytics', async (c) => {
   try {
     const products = await kv.getByPrefix('product:');
