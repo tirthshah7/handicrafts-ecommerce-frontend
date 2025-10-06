@@ -607,145 +607,159 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
                     Add Product
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>Add New Product</DialogTitle>
                     <DialogDescription>Create a new product in your catalog</DialogDescription>
                   </DialogHeader>
-                  <div className="space-y-6 py-4">
-                    {/* Product Images Section */}
-                    <div className="space-y-6">
-                      <div>
-                        <Label className="text-base font-medium">Product Images</Label>
-                        <p className="text-sm text-muted-foreground">Upload main product image and additional photos</p>
-                      </div>
-                      
-                      {/* Main Image Upload */}
-                      <div className="space-y-4">
-                        <Label htmlFor="mainImage">Main Product Image</Label>
-                        <ImageUpload
-                          onImageChange={(url) => setProductForm(prev => ({ ...prev, mainImage: url }))}
-                          currentImage={productForm.mainImage}
-                          placeholder="Enter main product image URL or upload file"
-                          showPreview={true}
-                        />
-                      </div>
-
-                      {/* Additional Images */}
-                      <ImageGallery
-                        images={productForm.additionalImages}
-                        onImagesChange={(images) => setProductForm(prev => ({ ...prev, additionalImages: images }))}
-                        maxImages={4}
-                      />
-                    </div>
-
-                    {/* Product Details */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="name">Product Name</Label>
-                        <Input 
-                          id="name" 
-                          value={productForm.name}
-                          onChange={(e) => setProductForm(prev => ({ ...prev, name: e.target.value }))}
-                          placeholder="Enter product name" 
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="category">Category</Label>
-                        <Select value={productForm.category} onValueChange={(value) => setProductForm(prev => ({ ...prev, category: value }))}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select category" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="jewellery">Mahima's Jewellery</SelectItem>
-                            <SelectItem value="mandala">Mahima's Mandala Art</SelectItem>
-                            <SelectItem value="premium">Premium Collection</SelectItem>
-                            <SelectItem value="novelty">Novelty Products</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="price">Price (₹)</Label>
-                        <Input 
-                          id="price" 
-                          type="number" 
-                          value={productForm.price}
-                          onChange={(e) => setProductForm(prev => ({ ...prev, price: e.target.value }))}
-                          placeholder="0" 
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="originalPrice">Original Price (₹)</Label>
-                        <Input 
-                          id="originalPrice" 
-                          type="number" 
-                          value={productForm.originalPrice}
-                          onChange={(e) => setProductForm(prev => ({ ...prev, originalPrice: e.target.value }))}
-                          placeholder="0" 
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="stock">Stock Quantity</Label>
-                        <Input 
-                          id="stock" 
-                          type="number" 
-                          value={productForm.stock}
-                          onChange={(e) => setProductForm(prev => ({ ...prev, stock: e.target.value }))}
-                          placeholder="0" 
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="lowStockThreshold">Low Stock Threshold</Label>
-                        <Input 
-                          id="lowStockThreshold" 
-                          type="number" 
-                          value={productForm.lowStockThreshold}
-                          onChange={(e) => setProductForm(prev => ({ ...prev, lowStockThreshold: e.target.value }))}
-                          placeholder="5" 
-                        />
+                  <div className="space-y-4 py-2">
+                    {/* Basic Information */}
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-medium text-muted-foreground">Basic Information</h3>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-2">
+                          <Label htmlFor="name">Product Name *</Label>
+                          <Input 
+                            id="name" 
+                            value={productForm.name}
+                            onChange={(e) => setProductForm(prev => ({ ...prev, name: e.target.value }))}
+                            placeholder="Enter product name" 
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="category">Category *</Label>
+                          <Select value={productForm.category} onValueChange={(value) => setProductForm(prev => ({ ...prev, category: value }))}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select category" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="jewellery">Mahima's Jewellery</SelectItem>
+                              <SelectItem value="mandala">Mahima's Mandala Art</SelectItem>
+                              <SelectItem value="premium">Premium Collection</SelectItem>
+                              <SelectItem value="novelty">Novelty Products</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="space-y-4">
+                    {/* Pricing & Inventory */}
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-medium text-muted-foreground">Pricing & Inventory</h3>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-2">
+                          <Label htmlFor="price">Price (₹) *</Label>
+                          <Input 
+                            id="price" 
+                            type="number" 
+                            value={productForm.price}
+                            onChange={(e) => setProductForm(prev => ({ ...prev, price: e.target.value }))}
+                            placeholder="0" 
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="originalPrice">Original Price (₹)</Label>
+                          <Input 
+                            id="originalPrice" 
+                            type="number" 
+                            value={productForm.originalPrice}
+                            onChange={(e) => setProductForm(prev => ({ ...prev, originalPrice: e.target.value }))}
+                            placeholder="0" 
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="stock">Stock Quantity *</Label>
+                          <Input 
+                            id="stock" 
+                            type="number" 
+                            value={productForm.stock}
+                            onChange={(e) => setProductForm(prev => ({ ...prev, stock: e.target.value }))}
+                            placeholder="0" 
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="lowStockThreshold">Low Stock Alert</Label>
+                          <Input 
+                            id="lowStockThreshold" 
+                            type="number" 
+                            value={productForm.lowStockThreshold}
+                            onChange={(e) => setProductForm(prev => ({ ...prev, lowStockThreshold: e.target.value }))}
+                            placeholder="5" 
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Product Images */}
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-medium text-muted-foreground">Product Images</h3>
+                      <div className="space-y-3">
+                        <div className="space-y-2">
+                          <Label htmlFor="mainImage">Main Product Image *</Label>
+                          <ImageUpload
+                            onImageChange={(url) => setProductForm(prev => ({ ...prev, mainImage: url }))}
+                            currentImage={productForm.mainImage}
+                            placeholder="Upload main image"
+                            showPreview={true}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Additional Images (Optional)</Label>
+                          <ImageGallery
+                            images={productForm.additionalImages}
+                            onImagesChange={(images) => setProductForm(prev => ({ ...prev, additionalImages: images }))}
+                            maxImages={4}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Description */}
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-medium text-muted-foreground">Description</h3>
                       <div className="space-y-2">
-                        <Label htmlFor="description">Description</Label>
+                        <Label htmlFor="description">Product Description *</Label>
                         <Textarea 
                           id="description" 
                           value={productForm.description}
                           onChange={(e) => setProductForm(prev => ({ ...prev, description: e.target.value }))}
-                          placeholder="Product description..." 
-                          rows={3} 
+                          placeholder="Describe your product..." 
+                          rows={2} 
                         />
                       </div>
-                      
                       <div className="space-y-2">
-                        <Label htmlFor="features">Features (one per line)</Label>
+                        <Label htmlFor="features">Key Features</Label>
                         <Textarea 
                           id="features" 
                           value={productForm.features}
                           onChange={(e) => setProductForm(prev => ({ ...prev, features: e.target.value }))}
                           placeholder="Feature 1&#10;Feature 2&#10;Feature 3" 
-                          rows={3} 
+                          rows={2} 
                         />
                       </div>
+                    </div>
 
+                    {/* Settings */}
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-medium text-muted-foreground">Settings</h3>
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label>Premium Product</Label>
+                        <div className="flex items-center space-x-2">
                           <Switch 
+                            id="premium"
                             checked={productForm.isPremium}
                             onCheckedChange={(checked) => setProductForm(prev => ({ ...prev, isPremium: checked }))}
                           />
+                          <Label htmlFor="premium">Premium Product</Label>
                         </div>
-                        <div className="space-y-2">
-                          <Label>New Product</Label>
+                        <div className="flex items-center space-x-2">
                           <Switch 
+                            id="new"
                             checked={productForm.isNew}
                             onCheckedChange={(checked) => setProductForm(prev => ({ ...prev, isNew: checked }))}
                           />
+                          <Label htmlFor="new">New Product</Label>
                         </div>
                       </div>
-
                       <div className="space-y-2">
                         <Label htmlFor="tags">Tags</Label>
                         <Input 
@@ -757,9 +771,10 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
                       </div>
                     </div>
                   </div>
-                  <DialogFooter>
+                  <DialogFooter className="flex-col sm:flex-row gap-2 pt-4">
                     <Button 
                       variant="outline"
+                      className="w-full sm:w-auto"
                       onClick={() => {
                         setProductForm({
                           name: '',
@@ -781,11 +796,11 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
                       Cancel
                     </Button>
                     <Button 
-                      className="bg-primary hover:bg-primary/90"
+                      className="bg-primary hover:bg-primary/90 w-full sm:w-auto"
                       onClick={() => {
                         // Validate required fields
                         if (!productForm.name || !productForm.category || !productForm.price) {
-                          toast.error('Please fill in all required fields');
+                          toast.error('Please fill in all required fields (*)');
                           return;
                         }
 
