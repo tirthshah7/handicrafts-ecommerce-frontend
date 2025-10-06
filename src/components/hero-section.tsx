@@ -33,12 +33,30 @@ export function HeroSection({ onCategoriesClick, onPremiumClick }: HeroSectionPr
   };
 
   const [heroContent, setHeroContent] = useState<HeroContent>(defaultHeroContent);
+  const [debugInfo, setDebugInfo] = useState<string>('Loading...');
 
-  // Load hero content from backend or localStorage on component mount
+  // Load hero content from localStorage first, then try backend
   useEffect(() => {
     const loadHeroContent = async () => {
       try {
-        // Try to load from backend first (for production)
+        // Always check localStorage first (works in both dev and production)
+        const savedHeroContent = localStorage.getItem('hero_content');
+        if (savedHeroContent) {
+          try {
+            const parsedContent = JSON.parse(savedHeroContent);
+            setHeroContent(parsedContent);
+            setDebugInfo('Loaded from localStorage');
+            console.log('Loaded hero content from localStorage:', parsedContent);
+            
+            // Also try to sync with backend in background (non-blocking)
+            syncWithBackend(parsedContent);
+            return;
+          } catch (parseError) {
+            console.error('Failed to parse localStorage content:', parseError);
+          }
+        }
+
+        // If no localStorage content, try backend
         try {
           const response = await fetch('https://bqeilonnsefbdoyiirsc.supabase.co/functions/v1/make-server-33f75b66/hero-content', {
             headers: {
@@ -50,23 +68,35 @@ export function HeroSection({ onCategoriesClick, onPremiumClick }: HeroSectionPr
             const data = await response.json();
             if (data.success && data.content) {
               setHeroContent(data.content);
+              setDebugInfo('Loaded from backend');
               console.log('Loaded hero content from backend:', data.content);
-              return;
+              // Also save to localStorage for future use
+              localStorage.setItem('hero_content', JSON.stringify(data.content));
             }
           }
         } catch (backendError) {
-          console.log('Backend load failed, trying localStorage:', backendError);
-        }
-
-        // Fallback to localStorage (for development)
-        const savedHeroContent = localStorage.getItem('hero_content');
-        if (savedHeroContent) {
-          const parsedContent = JSON.parse(savedHeroContent);
-          setHeroContent(parsedContent);
-          console.log('Loaded hero content from localStorage:', parsedContent);
+          console.log('Backend load failed, using default content:', backendError);
+          setDebugInfo('Using default content (backend failed)');
         }
       } catch (error) {
         console.error('Failed to load hero content:', error);
+      }
+    };
+
+    // Helper function to sync with backend (non-blocking)
+    const syncWithBackend = async (content: HeroContent) => {
+      try {
+        await fetch('https://bqeilonnsefbdoyiirsc.supabase.co/functions/v1/make-server-33f75b66/hero-content', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxZWlsb25uc2VmYmRveWlpcnNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0MjAzNDUsImV4cCI6MjA3NDk5NjM0NX0.I_0N3jfa7VWn8W8P-pHd-U9HNObzGuLqgzRVsPXzt00`
+          },
+          body: JSON.stringify(content)
+        });
+        console.log('Synced hero content with backend');
+      } catch (error) {
+        console.log('Backend sync failed (non-critical):', error);
       }
     };
 
@@ -104,6 +134,12 @@ export function HeroSection({ onCategoriesClick, onPremiumClick }: HeroSectionPr
   }, []);
   return (
     <section className="relative bg-gradient-to-br from-background to-secondary py-20 overflow-hidden">
+      {/* Debug indicator - remove in production */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed top-4 right-4 bg-black text-white px-3 py-1 rounded text-xs z-50">
+          Hero: {debugInfo}
+        </div>
+      )}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
