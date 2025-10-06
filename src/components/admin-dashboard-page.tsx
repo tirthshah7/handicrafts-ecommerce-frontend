@@ -419,41 +419,36 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
 
       <div className="container mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          {/* First row of tabs */}
-          <TabsList className="grid w-full grid-cols-4 mb-2">
-            <TabsTrigger value="dashboard" className="flex items-center gap-2">
+          <TabsList className="flex w-full overflow-x-auto mb-6">
+            <TabsTrigger value="dashboard" className="flex items-center gap-2 whitespace-nowrap">
               <BarChart3 className="h-4 w-4" />
               Dashboard
             </TabsTrigger>
-            <TabsTrigger value="products" className="flex items-center gap-2">
+            <TabsTrigger value="products" className="flex items-center gap-2 whitespace-nowrap">
               <Package className="h-4 w-4" />
               Products
             </TabsTrigger>
-            <TabsTrigger value="orders" className="flex items-center gap-2">
+            <TabsTrigger value="orders" className="flex items-center gap-2 whitespace-nowrap">
               <ShoppingCart className="h-4 w-4" />
               Orders
             </TabsTrigger>
-            <TabsTrigger value="users" className="flex items-center gap-2">
+            <TabsTrigger value="users" className="flex items-center gap-2 whitespace-nowrap">
               <Users className="h-4 w-4" />
               Users
             </TabsTrigger>
-          </TabsList>
-          
-          {/* Second row of tabs */}
-          <TabsList className="grid w-full grid-cols-4 mb-6">
-            <TabsTrigger value="inventory" className="flex items-center gap-2">
+            <TabsTrigger value="inventory" className="flex items-center gap-2 whitespace-nowrap">
               <AlertTriangle className="h-4 w-4" />
               Inventory
             </TabsTrigger>
-            <TabsTrigger value="hero" className="flex items-center gap-2">
+            <TabsTrigger value="hero" className="flex items-center gap-2 whitespace-nowrap">
               <Image className="h-4 w-4" />
-              Hero Management
+              Hero
             </TabsTrigger>
-            <TabsTrigger value="contact" className="flex items-center gap-2">
+            <TabsTrigger value="contact" className="flex items-center gap-2 whitespace-nowrap">
               <Phone className="h-4 w-4" />
-              Contact Info
+              Contact
             </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center gap-2">
+            <TabsTrigger value="settings" className="flex items-center gap-2 whitespace-nowrap">
               <Settings className="h-4 w-4" />
               Settings
             </TabsTrigger>
