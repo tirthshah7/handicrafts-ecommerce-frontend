@@ -248,9 +248,8 @@ function AppContent() {
           onSignInClick={navigateToSignIn}
           onSignUpClick={navigateToSignUp}
           onAdminClick={navigateToAdmin}
-            onOrderTrackingClick={navigateToOrderTracking}
-          onUserProfileClick={navigateToUserProfile}
           onOrderTrackingClick={navigateToOrderTracking}
+          onUserProfileClick={navigateToUserProfile}
           onReturnPolicyClick={navigateToReturnPolicy}
           onFAQClick={navigateToFAQ}
           wishlistCount={wishlistItems.length}
@@ -327,9 +326,8 @@ function AppContent() {
           onSignInClick={navigateToSignIn}
           onSignUpClick={navigateToSignUp}
           onAdminClick={navigateToAdmin}
-            onOrderTrackingClick={navigateToOrderTracking}
-          onUserProfileClick={navigateToUserProfile}
           onOrderTrackingClick={navigateToOrderTracking}
+          onUserProfileClick={navigateToUserProfile}
           onReturnPolicyClick={navigateToReturnPolicy}
           onFAQClick={navigateToFAQ}
           wishlistCount={wishlistItems.length}
@@ -407,9 +405,8 @@ function AppContent() {
           onSignInClick={navigateToSignIn}
           onSignUpClick={navigateToSignUp}
           onAdminClick={navigateToAdmin}
-            onOrderTrackingClick={navigateToOrderTracking}
-          onUserProfileClick={navigateToUserProfile}
           onOrderTrackingClick={navigateToOrderTracking}
+          onUserProfileClick={navigateToUserProfile}
           onReturnPolicyClick={navigateToReturnPolicy}
           onFAQClick={navigateToFAQ}
           wishlistCount={wishlistItems.length}
@@ -487,9 +484,8 @@ function AppContent() {
           onSignInClick={navigateToSignIn}
           onSignUpClick={navigateToSignUp}
           onAdminClick={navigateToAdmin}
-            onOrderTrackingClick={navigateToOrderTracking}
-          onUserProfileClick={navigateToUserProfile}
           onOrderTrackingClick={navigateToOrderTracking}
+          onUserProfileClick={navigateToUserProfile}
           onReturnPolicyClick={navigateToReturnPolicy}
           onFAQClick={navigateToFAQ}
           wishlistCount={wishlistItems.length}
@@ -564,9 +560,8 @@ function AppContent() {
           onSignInClick={navigateToSignIn}
           onSignUpClick={navigateToSignUp}
           onAdminClick={navigateToAdmin}
-            onOrderTrackingClick={navigateToOrderTracking}
-          onUserProfileClick={navigateToUserProfile}
           onOrderTrackingClick={navigateToOrderTracking}
+          onUserProfileClick={navigateToUserProfile}
           onReturnPolicyClick={navigateToReturnPolicy}
           onFAQClick={navigateToFAQ}
           wishlistCount={wishlistItems.length}
@@ -643,9 +638,8 @@ function AppContent() {
           onSignInClick={navigateToSignIn}
           onSignUpClick={navigateToSignUp}
           onAdminClick={navigateToAdmin}
-            onOrderTrackingClick={navigateToOrderTracking}
-          onUserProfileClick={navigateToUserProfile}
           onOrderTrackingClick={navigateToOrderTracking}
+          onUserProfileClick={navigateToUserProfile}
           onReturnPolicyClick={navigateToReturnPolicy}
           onFAQClick={navigateToFAQ}
           wishlistCount={wishlistItems.length}
@@ -722,9 +716,8 @@ function AppContent() {
           onSignInClick={navigateToSignIn}
           onSignUpClick={navigateToSignUp}
           onAdminClick={navigateToAdmin}
-            onOrderTrackingClick={navigateToOrderTracking}
-          onUserProfileClick={navigateToUserProfile}
           onOrderTrackingClick={navigateToOrderTracking}
+          onUserProfileClick={navigateToUserProfile}
           onReturnPolicyClick={navigateToReturnPolicy}
           onFAQClick={navigateToFAQ}
           wishlistCount={wishlistItems.length}
@@ -802,9 +795,8 @@ function AppContent() {
           onSignInClick={navigateToSignIn}
           onSignUpClick={navigateToSignUp}
           onAdminClick={navigateToAdmin}
-            onOrderTrackingClick={navigateToOrderTracking}
-          onUserProfileClick={navigateToUserProfile}
           onOrderTrackingClick={navigateToOrderTracking}
+          onUserProfileClick={navigateToUserProfile}
           onReturnPolicyClick={navigateToReturnPolicy}
           onFAQClick={navigateToFAQ}
           wishlistCount={wishlistItems.length}
