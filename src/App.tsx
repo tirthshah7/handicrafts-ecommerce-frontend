@@ -1075,7 +1075,6 @@ function AppContent() {
         isAuthenticated={isAuthenticated}
         userEmail={user?.email || ''}
         contactInfo={contactInfo}
-        contactInfo={contactInfo}
       />
       <SearchModal
         isOpen={isSearchOpen}

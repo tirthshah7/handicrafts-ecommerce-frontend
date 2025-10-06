@@ -419,7 +419,8 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
 
       <div className="container mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-7 mb-6">
+          {/* First row of tabs */}
+          <TabsList className="grid w-full grid-cols-4 mb-2">
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
               Dashboard
@@ -436,6 +437,10 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
               <Users className="h-4 w-4" />
               Users
             </TabsTrigger>
+          </TabsList>
+          
+          {/* Second row of tabs */}
+          <TabsList className="grid w-full grid-cols-4 mb-6">
             <TabsTrigger value="inventory" className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" />
               Inventory
