@@ -85,14 +85,23 @@ export function BackendProvider({ children }: BackendProviderProps) {
   // Load data from localStorage (fallback for non-authenticated users)
   const loadLocalStorageData = useCallback(() => {
     try {
+      console.log('Loading localStorage data...');
       const savedCart = localStorage.getItem('bhavyakavya-cart');
       if (savedCart) {
-        setCartItems(JSON.parse(savedCart));
+        const cartData = JSON.parse(savedCart);
+        console.log('Loaded cart from localStorage:', cartData);
+        setCartItems(cartData);
+      } else {
+        console.log('No cart data found in localStorage');
       }
 
       const savedWishlist = localStorage.getItem('bhavyakavya-wishlist');
       if (savedWishlist) {
-        setWishlistItems(JSON.parse(savedWishlist));
+        const wishlistData = JSON.parse(savedWishlist);
+        console.log('Loaded wishlist from localStorage:', wishlistData);
+        setWishlistItems(wishlistData);
+      } else {
+        console.log('No wishlist data found in localStorage');
       }
     } catch (error) {
       console.error('Error loading localStorage data:', error);
@@ -102,12 +111,14 @@ export function BackendProvider({ children }: BackendProviderProps) {
   // Save to localStorage (backup for non-authenticated users)
   useEffect(() => {
     if (!isAuthenticated) {
+      console.log('Saving cart to localStorage:', cartItems);
       localStorage.setItem('bhavyakavya-cart', JSON.stringify(cartItems));
     }
   }, [cartItems, isAuthenticated]);
 
   useEffect(() => {
     if (!isAuthenticated) {
+      console.log('Saving wishlist to localStorage:', wishlistItems);
       localStorage.setItem('bhavyakavya-wishlist', JSON.stringify(wishlistItems));
     }
   }, [wishlistItems, isAuthenticated]);
@@ -297,6 +308,8 @@ export function BackendProvider({ children }: BackendProviderProps) {
   }, []);
 
   const addToCart = useCallback(async (item: CartItem) => {
+    console.log('Adding to cart:', item, 'isAuthenticated:', isAuthenticated);
+    
     if (isAuthenticated) {
       try {
         const response = await api.addToCart(item.id, item.quantity);
@@ -304,14 +317,41 @@ export function BackendProvider({ children }: BackendProviderProps) {
           await syncCart();
           toast.success(`Added ${item.name} to cart`);
         } else {
-          toast.error(response.error || 'Failed to add item to cart');
+          console.error('Backend cart add failed:', response.error);
+          // Fallback to localStorage if backend fails
+          setCartItems(prev => {
+            const existingItem = prev.find(existing => existing.id === item.id);
+            if (existingItem) {
+              toast.success(`Updated ${item.name} quantity in cart (offline)`);
+              return prev.map(cartItem =>
+                cartItem.id === item.id
+                  ? { ...cartItem, quantity: cartItem.quantity + item.quantity }
+                  : cartItem
+              );
+            }
+            toast.success(`Added ${item.name} to cart (offline)`);
+            return [...prev, item];
+          });
         }
       } catch (error) {
-        console.error('Error adding to cart:', error);
-        toast.error('Failed to add item to cart');
+        console.error('Error adding to cart (backend failed):', error);
+        // Fallback to localStorage if backend fails
+        setCartItems(prev => {
+          const existingItem = prev.find(existing => existing.id === item.id);
+          if (existingItem) {
+            toast.success(`Updated ${item.name} quantity in cart (offline)`);
+            return prev.map(cartItem =>
+              cartItem.id === item.id
+                ? { ...cartItem, quantity: cartItem.quantity + item.quantity }
+                : cartItem
+            );
+          }
+          toast.success(`Added ${item.name} to cart (offline)`);
+          return [...prev, item];
+        });
       }
     } else {
-      // Local storage fallback
+      // Local storage fallback for non-authenticated users
       setCartItems(prev => {
         const existingItem = prev.find(existing => existing.id === item.id);
         if (existingItem) {

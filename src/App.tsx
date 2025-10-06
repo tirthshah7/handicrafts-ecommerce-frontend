@@ -26,6 +26,7 @@ import { UserProfilePage } from './components/user-profile-page';
 import { ThemeProvider } from './components/theme-provider';
 import { ThemeToggle } from './components/theme-toggle';
 import { BackendProvider } from './components/backend-provider';
+import { CartDebug } from './components/debug/CartDebug';
 import { toast } from 'sonner';
 import { Toaster } from './components/ui/sonner';
 
@@ -892,6 +893,7 @@ function AppContent() {
           onBackToHome={navigateToHome}
         />
         <ThemeToggle />
+        <CartDebug />
         <Toaster />
       </>
     );
@@ -976,6 +978,7 @@ function AppContent() {
         }}
       />
       <ThemeToggle />
+      <CartDebug />
       <Toaster />
     </div>
   );
