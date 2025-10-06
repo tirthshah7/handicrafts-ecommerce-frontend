@@ -35,28 +35,11 @@ export function HeroSection({ onCategoriesClick, onPremiumClick }: HeroSectionPr
   const [heroContent, setHeroContent] = useState<HeroContent>(defaultHeroContent);
   const [debugInfo, setDebugInfo] = useState<string>('Loading...');
 
-  // Load hero content from localStorage first, then try backend
+  // Load hero content from backend first, then fallback to localStorage
   useEffect(() => {
     const loadHeroContent = async () => {
       try {
-        // Always check localStorage first (works in both dev and production)
-        const savedHeroContent = localStorage.getItem('hero_content');
-        if (savedHeroContent) {
-          try {
-            const parsedContent = JSON.parse(savedHeroContent);
-            setHeroContent(parsedContent);
-            setDebugInfo('Loaded from localStorage');
-            console.log('Loaded hero content from localStorage:', parsedContent);
-            
-            // Also try to sync with backend in background (non-blocking)
-            syncWithBackend(parsedContent);
-            return;
-          } catch (parseError) {
-            console.error('Failed to parse localStorage content:', parseError);
-          }
-        }
-
-        // If no localStorage content, try backend
+        // Try backend first (for production consistency)
         try {
           const response = await fetch('https://bqeilonnsefbdoyiirsc.supabase.co/functions/v1/make-server-33f75b66/hero-content', {
             headers: {
@@ -70,16 +53,35 @@ export function HeroSection({ onCategoriesClick, onPremiumClick }: HeroSectionPr
               setHeroContent(data.content);
               setDebugInfo('Loaded from backend');
               console.log('Loaded hero content from backend:', data.content);
-              // Also save to localStorage for future use
+              // Save to localStorage for offline access
               localStorage.setItem('hero_content', JSON.stringify(data.content));
+              return;
             }
           }
         } catch (backendError) {
-          console.log('Backend load failed, using default content:', backendError);
-          setDebugInfo('Using default content (backend failed)');
+          console.log('Backend load failed, trying localStorage:', backendError);
         }
+
+        // Fallback to localStorage if backend fails
+        const savedHeroContent = localStorage.getItem('hero_content');
+        if (savedHeroContent) {
+          try {
+            const parsedContent = JSON.parse(savedHeroContent);
+            setHeroContent(parsedContent);
+            setDebugInfo('Loaded from localStorage (backend failed)');
+            console.log('Loaded hero content from localStorage:', parsedContent);
+            return;
+          } catch (parseError) {
+            console.error('Failed to parse localStorage content:', parseError);
+          }
+        }
+
+        // Final fallback to default content
+        setDebugInfo('Using default content (no data found)');
+        console.log('Using default hero content');
       } catch (error) {
         console.error('Failed to load hero content:', error);
+        setDebugInfo('Error loading content');
       }
     };
 

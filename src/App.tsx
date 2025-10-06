@@ -946,6 +946,9 @@ function AppContent() {
         onPrivacyClick={navigateToPrivacy}
         onTermsClick={navigateToTerms}
         onCookiesClick={navigateToCookies}
+        onUserProfileClick={navigateToUserProfile}
+        isAuthenticated={isAuthenticated}
+        userEmail={user?.email || ''}
       />
       <SearchModal
         isOpen={isSearchOpen}

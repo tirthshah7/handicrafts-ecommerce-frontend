@@ -156,14 +156,18 @@ export function Header({
                       </DropdownMenuItem>
                     </>
                   )}
-                  <DropdownMenuItem onClick={onUserProfileClick} className="cursor-pointer">
-                    <User className="mr-2 h-4 w-4" />
-                    My Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={onOrderTrackingClick} className="cursor-pointer">
-                    <Package className="mr-2 h-4 w-4" />
-                    Track Orders
-                  </DropdownMenuItem>
+                  {isAuthenticated && (
+                    <>
+                      <DropdownMenuItem onClick={onUserProfileClick} className="cursor-pointer">
+                        <User className="mr-2 h-4 w-4" />
+                        My Profile
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={onOrderTrackingClick} className="cursor-pointer">
+                        <Package className="mr-2 h-4 w-4" />
+                        Track Orders
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   <DropdownMenuItem onClick={onAdminClick} className="cursor-pointer border-t mt-1 pt-1">
                     <Settings className="mr-2 h-4 w-4" />
                     Admin Dashboard

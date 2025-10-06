@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Instagram, Facebook, Twitter, Mail, Phone, MapPin, LogIn, UserPlus } from 'lucide-react';
+import { Instagram, Facebook, Twitter, Mail, Phone, MapPin, LogIn, UserPlus, User } from 'lucide-react';
 import { Button } from './ui/button';
 
 interface FooterProps {
@@ -14,6 +14,9 @@ interface FooterProps {
   onPrivacyClick?: () => void;
   onTermsClick?: () => void;
   onCookiesClick?: () => void;
+  onUserProfileClick?: () => void;
+  isAuthenticated?: boolean;
+  userEmail?: string;
 }
 
 export function Footer({ 
@@ -27,7 +30,10 @@ export function Footer({
   onContactClick,
   onPrivacyClick,
   onTermsClick,
-  onCookiesClick
+  onCookiesClick,
+  onUserProfileClick,
+  isAuthenticated = false,
+  userEmail = ''
 }: FooterProps) {
   return (
     <footer className="bg-foreground text-background">
@@ -176,30 +182,53 @@ export function Footer({
               viewport={{ once: true }}
               className="space-y-4"
             >
-              <h4 className="text-lg text-primary">Join Us</h4>
-              <p className="text-background/80 text-sm">
-                Create an account to unlock exclusive deals and faster checkout.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  onClick={onSignInClick}
-                  className="flex-1 sm:flex-none bg-background/10 border-background/20 text-background hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300"
-                >
-                  <LogIn className="mr-2 h-4 w-4" />
-                  Sign In
-                </Button>
-                <Button 
-                  size="sm" 
-                  onClick={onSignUpClick}
-                  className="flex-1 sm:flex-none bg-primary hover:bg-primary/90 text-primary-foreground"
-                >
-                  <UserPlus className="mr-2 h-4 w-4" />
-                  Sign Up
-                </Button>
-              </div>
+              {isAuthenticated ? (
+                <>
+                  <h4 className="text-lg text-primary">My Account</h4>
+                  <p className="text-background/80 text-sm">
+                    Welcome back! Manage your profile and orders.
+                  </p>
+                  <p className="text-primary/80 text-sm font-medium">
+                    {userEmail}
+                  </p>
+                  
+                  <Button 
+                    size="sm" 
+                    onClick={onUserProfileClick}
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                  >
+                    <User className="mr-2 h-4 w-4" />
+                    Open My Profile
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <h4 className="text-lg text-primary">Join Us</h4>
+                  <p className="text-background/80 text-sm">
+                    Create an account to unlock exclusive deals and faster checkout.
+                  </p>
+                  
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={onSignInClick}
+                      className="flex-1 sm:flex-none bg-background/10 border-background/20 text-background hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300"
+                    >
+                      <LogIn className="mr-2 h-4 w-4" />
+                      Sign In
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      onClick={onSignUpClick}
+                      className="flex-1 sm:flex-none bg-primary hover:bg-primary/90 text-primary-foreground"
+                    >
+                      <UserPlus className="mr-2 h-4 w-4" />
+                      Sign Up
+                    </Button>
+                  </div>
+                </>
+              )}
 
               <div className="space-y-2 pt-4">
                 <div className="flex items-center gap-3">
