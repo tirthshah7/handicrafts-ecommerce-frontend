@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Header } from './components/header';
-import { HeroSection } from './components/hero-section';
+import HeroSection from './components/hero-section-production';
 import { FeaturedCategories } from './components/featured-categories';
 import { ProductShowcase } from './components/product-showcase';
 import { Footer } from './components/footer';
@@ -19,7 +19,7 @@ import { ContactUsPage } from './components/contact-us-page';
 import { PrivacyPolicyPage } from './components/privacy-policy-page';
 import { TermsOfServicePage } from './components/terms-of-service-page';
 import { CookiePolicyPage } from './components/cookie-policy-page';
-import { AdminDashboardPage } from './components/admin-dashboard-page';
+import AdminDashboardPage from './components/admin-dashboard-production';
 import { AdminLoginPage } from './components/admin-login-page';
 import { OrderTrackingPage } from './components/order-tracking-page';
 import { UserProfilePage } from './components/user-profile-page';
@@ -28,7 +28,6 @@ import { FAQPage } from './components/faq-page';
 import { ThemeProvider } from './components/theme-provider';
 import { ThemeToggle } from './components/theme-toggle';
 import { BackendProvider } from './components/backend-provider';
-import { CartDebug } from './components/debug/CartDebug';
 import { toast } from 'sonner';
 import { Toaster } from './components/ui/sonner';
 
@@ -950,10 +949,7 @@ function AppContent() {
   if (currentPage === 'admin') {
     return (
       <>
-        <AdminDashboardPage 
-          onBackToHome={navigateToHome}
-          onLogout={handleAdminLogout}
-        />
+        <AdminDashboardPage />
         <ThemeToggle />
         <Toaster />
       </>
@@ -979,7 +975,6 @@ function AppContent() {
           onBackToHome={navigateToHome}
         />
         <ThemeToggle />
-        <CartDebug />
         <Toaster />
       </>
     );
@@ -993,7 +988,6 @@ function AppContent() {
           onContactClick={navigateToContact}
         />
         <ThemeToggle />
-        <CartDebug />
         <Toaster />
       </>
     );
@@ -1007,7 +1001,6 @@ function AppContent() {
           onContactClick={navigateToContact}
         />
         <ThemeToggle />
-        <CartDebug />
         <Toaster />
       </>
     );
