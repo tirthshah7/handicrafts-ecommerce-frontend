@@ -1611,10 +1611,7 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
                     // Fallback to local storage
                     localStorage.setItem('hero_content', JSON.stringify(heroContent));
                     
-                    // Dispatch custom event for real-time updates within same tab
-                    window.dispatchEvent(new CustomEvent('heroContentUpdated', { 
-                      detail: heroContent 
-                    }));
+        // Hero content saved locally - no event dispatching to prevent override
                     
                     setIsOfflineMode(true);
                     toast.success('Hero content saved locally! Changes will appear immediately on this device.');

@@ -21,7 +21,7 @@ interface HeroContent {
 }
 
 export function HeroSection({ onCategoriesClick, onPremiumClick }: HeroSectionProps) {
-  // Default hero content
+  // Default hero content with your jewelry image
   const defaultHeroContent: HeroContent = {
     title: "Discover India's",
     subtitle: "Finest Handicrafts",
@@ -34,112 +34,15 @@ export function HeroSection({ onCategoriesClick, onPremiumClick }: HeroSectionPr
   };
 
   const [heroContent, setHeroContent] = useState<HeroContent>(defaultHeroContent);
-  const [debugInfo, setDebugInfo] = useState<string>('Loading...');
+  const [debugInfo, setDebugInfo] = useState<string>('Using default jewelry image');
 
-  // Load hero content from backend first, then fallback to localStorage
+  // SIMPLIFIED: Just use the default content, no complex loading logic
   useEffect(() => {
-    const loadHeroContent = async () => {
-      try {
-        // Clear old localStorage data to force fresh load
-        localStorage.removeItem('hero_content');
-        localStorage.removeItem('bhavyakavya-hero-content');
-        localStorage.removeItem('hero_content_backup');
-        
-        // Try backend first (for production consistency)
-        try {
-          const response = await fetch('https://bqeilonnsefbdoyiirsc.supabase.co/functions/v1/make-server-33f75b66/hero-content', {
-            headers: {
-              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxZWlsb25uc2VmYmRveWlpcnNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0MjAzNDUsImV4cCI6MjA3NDk5NjM0NX0.I_0N3jfa7VWn8W8P-pHd-U9HNObzGuLqgzRVsPXzt00`
-            }
-          });
-          
-          if (response.ok) {
-            const data = await response.json();
-            if (data.success && data.content) {
-              setHeroContent(data.content);
-              setDebugInfo('Loaded from backend');
-              console.log('Loaded hero content from backend:', data.content);
-              // Save to localStorage for offline access
-              localStorage.setItem('hero_content', JSON.stringify(data.content));
-              return;
-            }
-          }
-        } catch (backendError) {
-          console.log('Backend load failed, trying localStorage:', backendError);
-        }
-
-        // Fallback to localStorage if backend fails
-        const savedHeroContent = localStorage.getItem('hero_content');
-        if (savedHeroContent) {
-          try {
-            const parsedContent = JSON.parse(savedHeroContent);
-            setHeroContent(parsedContent);
-            setDebugInfo('Loaded from localStorage (backend failed)');
-            console.log('Loaded hero content from localStorage:', parsedContent);
-            return;
-          } catch (parseError) {
-            console.error('Failed to parse localStorage content:', parseError);
-          }
-        }
-
-        // Final fallback to default content
-        setDebugInfo('Using default content (no data found)');
-        console.log('Using default hero content');
-      } catch (error) {
-        console.error('Failed to load hero content:', error);
-        setDebugInfo('Error loading content');
-      }
-    };
-
-    // Helper function to sync with backend (non-blocking)
-    const syncWithBackend = async (content: HeroContent) => {
-      try {
-        await fetch('https://bqeilonnsefbdoyiirsc.supabase.co/functions/v1/make-server-33f75b66/hero-content', {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxZWlsb25uc2VmYmRveWlpcnNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0MjAzNDUsImV4cCI6MjA3NDk5NjM0NX0.I_0N3jfa7VWn8W8P-pHd-U9HNObzGuLqgzRVsPXzt00`
-          },
-          body: JSON.stringify(content)
-        });
-        console.log('Synced hero content with backend');
-      } catch (error) {
-        console.log('Backend sync failed (non-critical):', error);
-      }
-    };
-
-    loadHeroContent();
+    console.log('🎯 Hero Section: Using default jewelry image');
+    setHeroContent(defaultHeroContent);
+    setDebugInfo('Using default jewelry image');
   }, []);
 
-  // Listen for storage changes and custom events to update hero content in real-time
-  useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'hero_content' && e.newValue) {
-        try {
-          const parsedContent = JSON.parse(e.newValue);
-          setHeroContent(parsedContent);
-          console.log('Hero content updated from storage change:', parsedContent);
-        } catch (error) {
-          console.error('Failed to parse updated hero content:', error);
-        }
-      }
-    };
-
-    const handleCustomEvent = (e: CustomEvent) => {
-      if (e.detail) {
-        setHeroContent(e.detail);
-        console.log('Hero content updated from custom event:', e.detail);
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('heroContentUpdated', handleCustomEvent as EventListener);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('heroContentUpdated', handleCustomEvent as EventListener);
-    };
-  }, []);
   return (
     <section className="relative bg-gradient-to-br from-background to-secondary py-20 overflow-hidden">
       {/* Debug indicator - remove in production */}
@@ -205,8 +108,6 @@ export function HeroSection({ onCategoriesClick, onPremiumClick }: HeroSectionPr
                 </Button>
               </motion.div>
             </motion.div>
-
-
           </motion.div>
 
           {/* Right Content - Hero Image */}
