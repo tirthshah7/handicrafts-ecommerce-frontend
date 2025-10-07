@@ -2,6 +2,7 @@ import { Button } from './ui/button';
 import { motion } from 'motion/react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { useState, useEffect } from 'react';
+import heroJewelryImage from '../assets/hero-jewelry.webp';
 
 interface HeroSectionProps {
   onCategoriesClick?: () => void;
@@ -28,7 +29,7 @@ export function HeroSection({ onCategoriesClick, onPremiumClick }: HeroSectionPr
     description: "From premium handcrafted jewelry to exquisite mandala art, explore our curated collection of authentic Indian handicrafts that celebrate tradition and artistry.",
     ctaPrimary: "Shop Premium Collection",
     ctaSecondary: "Explore Categories",
-    heroImage: "/Hero_image.webp",
+    heroImage: heroJewelryImage,
     heroImageAlt: "Traditional Indian Jewelry Set - Handcrafted Necklace, Earrings, and Maang Tikka"
   };
 
