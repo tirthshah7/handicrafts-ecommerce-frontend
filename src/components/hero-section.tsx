@@ -24,7 +24,7 @@ export function HeroSection({ onCategoriesClick, onPremiumClick }: HeroSectionPr
   // Default hero content with your jewelry image
   const defaultHeroContent: HeroContent = {
     title: "Discover India's",
-    subtitle: "Finest Handicrafts",
+    subtitle: "Finest Hand crafted Jewellery",
     tagline: "Crafting a Poem of Splendid Living",
     description: "From premium handcrafted jewelry to exquisite mandala art, explore our curated collection of authentic Indian handicrafts that celebrate tradition and artistry.",
     ctaPrimary: "Shop Premium Collection",
