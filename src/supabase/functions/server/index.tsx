@@ -1614,6 +1614,12 @@ app.get('/make-server-33f75b66/admin/images', async (c) => {
 // Hero content management endpoints
 app.get('/make-server-33f75b66/hero-content', async (c) => {
   try {
+    // Clear any old hero content with Unsplash URL
+    const oldHeroContent = await kv.get('hero_content');
+    if (oldHeroContent && oldHeroContent.includes('unsplash')) {
+      await kv.delete('hero_content');
+    }
+    
     const heroContent = await kv.get('hero_content');
     
     if (!heroContent) {

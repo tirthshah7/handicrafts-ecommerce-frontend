@@ -134,7 +134,7 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
     description: "From premium handcrafted jewelry to exquisite mandala art, explore our curated collection of authentic Indian handicrafts that celebrate tradition and artistry.",
     ctaPrimary: "Shop Now",
     ctaSecondary: "Explore Categories",
-    heroImage: "https://images.unsplash.com/photo-1699799085041-e288623615ed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjB0cmFkaXRpb25hbCUyMGhhbmRpY3JhZnRzJTIwaGVyb3xlbnwxfHx8fDE3NTkyMzM5MDd8MA&ixlib=rb-4.0&q=80&w=1080",
+    heroImage: "/assets/hero-jewelry.webp",
     heroImageAlt: "Indian Traditional Handicrafts"
   });
 
@@ -1575,7 +1575,7 @@ export function AdminDashboardPage({ onBackToHome, onLogout }: AdminDashboardPag
                     description: "From premium handcrafted jewelry to exquisite mandala art, explore our curated collection of authentic Indian handicrafts that celebrate tradition and artistry.",
                     ctaPrimary: "Shop Now",
                     ctaSecondary: "Explore Categories",
-                    heroImage: "https://images.unsplash.com/photo-1699799085041-e288623615ed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjB0cmFkaXRpb25hbCUyMGhhbmRpY3JhZnRzJTIwaGVyb3xlbnwxfHx8fDE3NTkyMzM5MDd8MA&ixlib=rb-4.0&q=80&w=1080",
+                    heroImage: "/assets/hero-jewelry.webp",
                     heroImageAlt: "Indian Traditional Handicrafts"
                   });
                   toast.success('Hero content reset to default');

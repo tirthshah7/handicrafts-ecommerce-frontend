@@ -42,6 +42,8 @@ export function HeroSection({ onCategoriesClick, onPremiumClick }: HeroSectionPr
       try {
         // Clear old localStorage data to force fresh load
         localStorage.removeItem('hero_content');
+        localStorage.removeItem('bhavyakavya-hero-content');
+        localStorage.removeItem('hero_content_backup');
         
         // Try backend first (for production consistency)
         try {
