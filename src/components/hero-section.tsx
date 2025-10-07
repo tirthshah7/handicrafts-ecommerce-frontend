@@ -40,6 +40,9 @@ export function HeroSection({ onCategoriesClick, onPremiumClick }: HeroSectionPr
   useEffect(() => {
     const loadHeroContent = async () => {
       try {
+        // Clear old localStorage data to force fresh load
+        localStorage.removeItem('hero_content');
+        
         // Try backend first (for production consistency)
         try {
           const response = await fetch('https://bqeilonnsefbdoyiirsc.supabase.co/functions/v1/make-server-33f75b66/hero-content', {

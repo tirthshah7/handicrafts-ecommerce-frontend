@@ -1625,8 +1625,8 @@ app.get('/make-server-33f75b66/hero-content', async (c) => {
         description: "From premium handcrafted jewelry to exquisite mandala art, explore our curated collection of authentic Indian handicrafts that celebrate tradition and artistry.",
         ctaPrimary: "Shop Now",
         ctaSecondary: "Explore Categories",
-        heroImage: "https://images.unsplash.com/photo-1699799085041-e288623615ed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjB0cmFkaXRpb25hbCUyMGhhbmRpY3JhZnRzJTIwaGVyb3xlbnwxfHx8fDE3NTkyMzM5MDd8MA&ixlib=rb-4.0&q=80&w=1080",
-        heroImageAlt: "Indian Traditional Handicrafts",
+        heroImage: "/assets/hero-jewelry.webp",
+        heroImageAlt: "Traditional Indian Jewelry Set - Handcrafted Necklace, Earrings, and Maang Tikka",
         updatedAt: new Date().toISOString()
       };
       return c.json({ success: true, content: defaultContent });
