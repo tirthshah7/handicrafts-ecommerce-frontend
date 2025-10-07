@@ -89,11 +89,14 @@ class ApiClient {
       body: JSON.stringify({ email, password }),
     });
 
-    if (response.success && response.data?.session?.access_token) {
-      this.setAccessToken(response.data.session.access_token);
-      // Store token in localStorage for persistence
-      localStorage.setItem('bhavyakavya-access-token', response.data.session.access_token);
-      localStorage.setItem('bhavyakavya-user', JSON.stringify(response.data.user));
+    if (response.success && response.data && typeof response.data === 'object' && response.data !== null) {
+      const data = response.data as any;
+      if (data.session && data.session.access_token) {
+        this.setAccessToken(data.session.access_token);
+        // Store token in localStorage for persistence
+        localStorage.setItem('bhavyakavya-access-token', data.session.access_token);
+        localStorage.setItem('bhavyakavya-user', JSON.stringify(data.user));
+      }
     }
 
     return response;

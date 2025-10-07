@@ -28,6 +28,8 @@ const defaultHeroContent: HeroContent = {
 interface HeroSectionProps {
   onShopNowClick: () => void;
   onExploreClick: () => void;
+  onCategoriesClick?: () => void;
+  onPremiumClick?: () => void;
 }
 
 export default function HeroSection({ onShopNowClick, onExploreClick }: HeroSectionProps) {

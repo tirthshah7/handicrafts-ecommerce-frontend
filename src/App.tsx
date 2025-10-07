@@ -1025,6 +1025,8 @@ function AppContent() {
       />
       <main>
         <HeroSection 
+          onShopNowClick={navigateToAllProducts}
+          onExploreClick={navigateToCategories}
           onCategoriesClick={navigateToCategories}
           onPremiumClick={navigateToPremium}
         />
@@ -1092,7 +1094,6 @@ function AppContent() {
         }}
       />
       <ThemeToggle />
-      <CartDebug />
       <Toaster />
     </div>
   );

@@ -19,6 +19,8 @@ interface HeaderProps {
   onAdminClick?: () => void;
   onOrderTrackingClick?: () => void;
   onUserProfileClick?: () => void;
+  onReturnPolicyClick?: () => void;
+  onFAQClick?: () => void;
   wishlistCount?: number;
   cartCount?: number;
 }
@@ -37,8 +39,10 @@ export function Header({
   onAdminClick,
   onOrderTrackingClick,
   onUserProfileClick,
+  onReturnPolicyClick,
+  onFAQClick,
   wishlistCount = 0,
-  cartCount = 0 
+  cartCount = 0
 }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, isAuthenticated, signOut } = useBackend();
