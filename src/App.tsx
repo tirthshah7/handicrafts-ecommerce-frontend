@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Header } from './components/header';
-import HeroSection from './components/hero-section-production';
+import { HeroSection } from './components/hero-section';
 import { FeaturedCategories } from './components/featured-categories';
 import { ProductShowcase } from './components/product-showcase';
 import { Footer } from './components/footer';
@@ -19,7 +19,7 @@ import { ContactUsPage } from './components/contact-us-page';
 import { PrivacyPolicyPage } from './components/privacy-policy-page';
 import { TermsOfServicePage } from './components/terms-of-service-page';
 import { CookiePolicyPage } from './components/cookie-policy-page';
-import AdminDashboardPage from './components/admin-dashboard-production';
+import { AdminDashboardPage } from './components/admin-dashboard-page';
 import { AdminLoginPage } from './components/admin-login-page';
 import { OrderTrackingPage } from './components/order-tracking-page';
 import { UserProfilePage } from './components/user-profile-page';
@@ -1025,8 +1025,6 @@ function AppContent() {
       />
       <main>
         <HeroSection 
-          onShopNowClick={navigateToAllProducts}
-          onExploreClick={navigateToCategories}
           onCategoriesClick={navigateToCategories}
           onPremiumClick={navigateToPremium}
         />
